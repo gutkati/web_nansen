@@ -1,0 +1,28 @@
+@import "../../styles/_variables.module";
+
+.card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: $darkgrey-color;
+
+  & .card__link {
+
+    & a {
+      text-decoration: none;
+      color: $text-color;
+      transition: all ease .2s;
+    }
+
+    &:hover {
+      color: $lightgreen-color;
+    }
+
+    &:active {
+      color: $lightgreen-hover-color;
+    }
+  }
+}

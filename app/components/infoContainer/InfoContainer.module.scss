@@ -1,0 +1,41 @@
+@import "../../styles/_variables.module";
+
+.info {
+  width: 32%;
+  height: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 9px rgba(0, 0, 0, .5);
+  border: 1px solid $grey-color;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-right: 16px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    //margin: 5px 10px 5px 0;
+    width: 6px;
+  }
+
+  // Дорожка скролла (фон)
+  &::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4a5467;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  & .title {
+    font-size: 24px;
+    text-align: center;
+    margin: 0 auto;
+  }
+}

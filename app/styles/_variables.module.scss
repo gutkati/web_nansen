@@ -1,0 +1,17 @@
+$grey-color: #3D4754;
+$darkgrey-color: #303843;
+$text-color: #F6F6F6;
+$lightgreen-color: #C9E957;
+$lightgreen-hover-color: #aecd45;
+
+
+$gradient-button: linear-gradient(to bottom, #025A68, #009F8A);
+$gradient-column: linear-gradient(to top, #D9D9D9, #FF9D79, #FF6262);
+$box-shadow: -8px 8px 6px 0 rgba(0, 0, 0, 0.25);
+
+:export {
+  textColor: $text-color;
+  greyСolor: $grey-color;
+  darkgreyСolor: $darkgrey-color;
+  lightgreenColor: #C9E957;
+}

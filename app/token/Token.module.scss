@@ -1,0 +1,42 @@
+@import "../styles/_variables.module";
+
+.token {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2%;
+  height: 100%;
+
+  & .token__list {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    width: 85%;
+    gap: 10px;
+
+    & li {
+      font-size: 20px;
+      line-height: 34px;
+      border-radius: 20px;
+      list-style: none;
+      align-items: start;
+      padding-left: 10px;
+      transition: all ease .2s;
+
+      &.month_item {
+        &:hover {
+          background-color: $darkgrey-color;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: $grey-color;
+        color: $lightgreen-color;
+      }
+
+      &:active {
+        color: $lightgreen-hover-color;
+      }
+    }
+  }
+}
