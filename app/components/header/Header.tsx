@@ -1,13 +1,11 @@
-import React from 'react';
 import styles from './Header.module.scss'
+import Link from "next/link";
 
 const Header = () => {
     return (
-        <div className={styles.header}>
-            <div className={styles.logo}>
-                {/*<img src="../../images/logo.png" alt="логотип"/>*/}
-            </div>
-        </div>
+        <header className={styles.header}>
+            <Link href='/' className={styles.logo}></Link>
+        </header>
     );
 };
 

@@ -1,7 +1,12 @@
 import Token from "@/app/token/Token";
 import {tokens} from '../arrays/tokens';
 import {month} from '../arrays/month';
+import type {Metadata} from "next";
 
+export const metadata: Metadata = {
+  title: "Токены",
+  description: "Список токенов",
+};
 
 export default function TokenPage() {
 
@@ -11,7 +16,6 @@ export default function TokenPage() {
         </>
 
     )
-
 }
 
 // export async function getStaticProps() {

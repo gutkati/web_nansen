@@ -1,13 +1,18 @@
 @import "../../styles/_variables.module";
 
 .card {
-  width: 100%;
+  width: 95%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding: 10px;
   border-radius: 10px;
   background-color: $darkgrey-color;
+  font-size: 15px;
+
+  @media (max-width: 1440px) {
+    font-size: 14px;
+  }
 
   & .card__link {
 
@@ -23,6 +28,56 @@
 
     &:active {
       color: $lightgreen-hover-color;
+    }
+  }
+
+  & .card__info {
+    display: flex;
+    justify-content: space-between;
+
+    & .card__text_bold {
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+  }
+
+  & .card__volume {
+    & .card__price {
+      color: $lightgreen-color;
+    }
+  }
+
+  & .card__viewing {
+    & input[type='checkbox'] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background-color: #4a536a;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+
+      &:hover {
+        opacity: .9;
+      }
+
+      &:checked {
+        background-color: $lightgreen-hover-color;
+        border-color: $lightgreen-hover-color;
+      }
+
+      &:checked::after {
+        content: "✓";
+        color: white;
+        font-weight: bold;
+        position: absolute;
+        left: 2px;
+        top: -2px;
+        font-size: 14px;
+        text-align: center;
+      }
     }
   }
 }

@@ -10,17 +10,44 @@
     display: flex;
     flex-direction: column;
     text-align: start;
-    width: 85%;
+    width: 100%;
     gap: 10px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+      transition: all ease .2s;
+    }
+
+    // Дорожка скролла (фон)
+    &::-webkit-scrollbar-track {
+      background: inherit;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #232a32;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #1e232b;
+    }
 
     & li {
       font-size: 20px;
-      line-height: 34px;
+      line-height: 30px;
       border-radius: 20px;
       list-style: none;
       align-items: start;
       padding-left: 10px;
       transition: all ease .2s;
+      width: 95%;
+
+      @media (max-width: 1440px) {
+        line-height: 26px;
+        font-size: 18px;
+      }
 
       &.month_item {
         &:hover {
