@@ -20,6 +20,7 @@ const Token: React.FC<TokenProps> = ({tokens, month}) => {
 
     function showListMonth() {
         setIsShowMonth(true)
+        setIsPurchases(false)
     }
 
     function showListPurchases() {
