@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './InfoContainer.module.scss'
+import ButtonBack from "@/app/components/buttonBack/ButtonBack";
 
 type InfoContainerProps = {
     background: string,

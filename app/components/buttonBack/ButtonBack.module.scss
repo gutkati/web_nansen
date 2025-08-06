@@ -1,0 +1,19 @@
+.back {
+
+  &__text {
+    opacity: .4;
+    font-size: 12px;
+    transition: all .2s ease;
+    letter-spacing: 1px;
+    padding-left: 22px;
+
+    &:hover {
+      opacity: .7;
+    }
+
+    &:active {
+      opacity: .9;
+    }
+
+  }
+}

@@ -1,0 +1,29 @@
+import connection from "@/lib/db";
+
+interface ListPurchases {
+    id: number;
+    token_id: number;
+}
+
+interface LastPurchase {
+    token_id: number;
+    purchase_id: number
+}
+
+export async function getPurchasesAll(): Promise<ListPurchases[]> {
+    const [rows] = await connection.query(
+        `SELECT MAX(id) as id, token_id
+         FROM bought_sold
+         GROUP BY token_id`
+    );
+
+    return rows as ListPurchases[]
+}
+
+export async function getLastPurchase(): Promise<LastPurchase[]> {
+    const [rows] = await connection.query(
+        'SELECT token_id, purchase_id FROM last_purchase',
+    )
+
+    return rows as LastPurchase[]
+}

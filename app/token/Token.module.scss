@@ -40,13 +40,18 @@
       border-radius: 20px;
       list-style: none;
       align-items: start;
-      padding-left: 10px;
+      padding-left: 22px;
       transition: all ease .2s;
       width: 95%;
+      position: relative;
 
       @media (max-width: 1440px) {
         line-height: 26px;
         font-size: 18px;
+      }
+
+      &.text__active {
+        color: $lightgreen-color;
       }
 
       &.month_item {
@@ -63,6 +68,42 @@
 
       &:active {
         color: $lightgreen-hover-color;
+      }
+    }
+
+    &.monthFadeIn {
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  & .text__message {
+    font-size: 24px;
+    line-height: 30px;
+    text-align: center;
+
+    &.monthFadeIn {
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   }
