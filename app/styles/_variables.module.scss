@@ -6,7 +6,7 @@ $lightgreen-hover-color: #aecd45;
 $lilac-color: #C68DFE;
 
 $gradient-button: linear-gradient(to bottom, #C9E957, #303843);
-$box-shadow: -8px 8px 6px 0 rgba(0, 0, 0, 0.25);
+$box-shadow: 0 0 9px rgba(0, 0, 0, .5);
 
 :export {
   textColor: $text-color;

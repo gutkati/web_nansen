@@ -32,6 +32,6 @@ export function usePurchaseDates() {
             setLoading(false)
         }
     }
-
+    // console.log('dates', dates)
     return {dates, loading, error, fetchDates};
 };

@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import styles from './CardBuyer.module.scss'
+import ModalForm from "@/app/components/modalWindows/modalForm";
+import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 
 type BuyerProps = {
     buyer: {
@@ -10,11 +12,14 @@ type BuyerProps = {
         current_balance: string;
         timestamp: string;
         show_key: number | null;
-    }
+    };
+    onDelete: () => void;
 }
 
-const CardBuyer: React.FC<BuyerProps> = ({buyer}) => {
+const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
+    // const [buyers, setBuyers] = useState(buyer | [])
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
@@ -51,9 +56,46 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer}) => {
         }
     }
 
+    const handleDeleteBuyer = async (id: number) => {
+    try {
+        const res = await fetch('/api/deletePurchase', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+
+        if (!res.ok) {
+            console.error('Ошибка при удалении');
+            return;
+        }
+
+        onDelete()
+        setIsModalOpen(false);
+    } catch (err) {
+        console.error('Сетевая ошибка при удалении:', err);
+    }
+};
+
+    function openModalClose() {
+        console.log('id', buyer.id)
+        setIsModalOpen(true)
+    }
+
+    function closeModalClose() {
+        setIsModalOpen(false)
+    }
 
     return (
         <div className={styles.card}>
+            <div
+                className={styles.card__close}
+                onClick={openModalClose}
+            >
+
+            </div>
+
             <div className={styles.card__link}>
                 <a href={`https://app.nansen.ai/profiler?address=${buyer.address}&chain=all`}
                    target='_blank'>{buyer.address}</a>
@@ -85,6 +127,18 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer}) => {
                     onChange={handleCheckboxChange}
                 />
             </div>
+            {
+                isModalOpen && (
+                    <ModalForm children={<ModalRemovePurchase
+                        key={buyer.id}
+                        id={buyer.id}
+                        onClose={closeModalClose}
+                        onConfirm={handleDeleteBuyer}
+                    />
+                    }/>
+                )
+            }
+
         </div>
     );
 };

@@ -13,13 +13,15 @@ interface PurchaseData {
 
 export function usePurchaseData() {
     const [data, setData] = useState<PurchaseData[]>([])
+    const [dataFilterMonth, setDataFilterMonth] = useState<PurchaseData[]>([])
     const [loadingPurchase, setLoadingPurchase] = useState(false)
     const [errorPurchase, setErrorPurchase] = useState<string | null>(null)
 
-    const fetchData = async (tokenId: number) => {
+    const fetchData = async (tokenId: number, filterDates?: Date[]) => {
         setLoadingPurchase(true)
         setErrorPurchase(null)
         setData([])
+        setDataFilterMonth([])
 
         try {
             const res = await fetch('api/dataPurchase', {
@@ -29,14 +31,31 @@ export function usePurchaseData() {
                 },
                 body: JSON.stringify({tokenId})
             })
-            const data = await res.json()
-
+            const lisData = await res.json()
+            console.log('lisData', lisData)
             if (res.ok) {
-                const purchases = data as PurchaseData[];
-                setData(purchases)
-                console.log('data', data)
+                let purchases = lisData as PurchaseData[];
+                setData(purchases.reverse())
+                // purchases.reverse()
+                //Фильтрация по датам, если переданы
+                if (filterDates && filterDates.length > 0) {
+                    const baseDate = new Date(filterDates[0]);
+                    const targetYear = baseDate.getFullYear();
+                    const targetMonth = baseDate.getMonth();
+
+                    purchases = purchases.filter(purchase => {
+                        const purchaseDate = new Date(purchase.timestamp);
+                        return (
+                            purchaseDate.getFullYear() === targetYear &&
+                            purchaseDate.getMonth() === targetMonth
+                        );
+                    });
+                }
+                console.log('data', purchases)
+                setDataFilterMonth(purchases)
+
             } else {
-                setErrorPurchase(data.error || "Произошла ошибка")
+                setErrorPurchase(lisData.error || "Произошла ошибка")
             }
         } catch (err) {
             setErrorPurchase("Ошибка запроса")
@@ -45,5 +64,5 @@ export function usePurchaseData() {
         }
     }
 
-    return {data, loadingPurchase, errorPurchase, fetchData};
+    return {data, dataFilterMonth, loadingPurchase, errorPurchase, fetchData};
 };

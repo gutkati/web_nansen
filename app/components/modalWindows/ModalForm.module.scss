@@ -1,0 +1,34 @@
+@import "../../styles/_variables.module";
+
+.modalremove__phone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  z-index: 1000;
+
+  & .modalform {
+    min-width: 320px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: $darkgrey-color;
+    box-shadow: $box-shadow;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //position: absolute;
+    //top: 10px;
+    //left: 20%;
+
+    & .modalform__container {
+      width: 100%;
+    }
+  }
+}
+

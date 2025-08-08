@@ -45,9 +45,18 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [activeMonth, setActiveMonth] = useState<string | null>(null)
     const [isNotification, setIsNotification] = useState(false)
     const [localLastPurchase, setLocalLastPurchase] = useState<LastPurchase[]>(lastPurchase)
+    const [clientPurchases, setClientPurchases] = useState<ListPurchases[]>(listPurchases)
+
+    const [selectedMonth, setSelectedMonth] = useState<Date[] | []>([]);
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
-    const {data: purchases, loadingPurchase, errorPurchase, fetchData} = usePurchaseData()
+    const {
+        data: purchasesToken,
+        dataFilterMonth: purchases,
+        loadingPurchase,
+        errorPurchase,
+        fetchData
+    } = usePurchaseData()
 
     useEffect(() => {
         if (dates.length > 0) {
@@ -62,27 +71,37 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
     // записывает id последней закупки
     useEffect(() => {
-        if (purchases.length > 0 && activeTokenId !== null) {
-            const latestPurchase = purchases[0]; // т.к. сортировка по времени
-            fetch('/api/saveLastPurchase', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    tokenId: activeTokenId,
-                    purchaseId: latestPurchase.id,
-                }),
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.success) {
-                        console.warn('Ошибка при сохранении последней покупки');
-                    } else {
-                        updateLocalLastPurchase(activeTokenId, latestPurchase.id)
-                    }
+        if (purchasesToken.length > 0 && activeTokenId !== null) {
+            console.log('purchases', purchasesToken)
+            const latestPurchase = purchasesToken[0]; // т.к. сортировка по времени
+            const purchaseDate = new Date(latestPurchase.timestamp);
+            const selected = selectedMonth[0];
+
+            const sameMonth =
+                purchaseDate.getFullYear() === selected.getFullYear() &&
+                purchaseDate.getMonth() === selected.getMonth();
+
+            if (sameMonth) {
+                fetch('/api/saveLastPurchase', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tokenId: activeTokenId,
+                        purchaseId: latestPurchase.id,
+                    }),
                 })
-                .catch(console.error);
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.warn('Ошибка при сохранении последней покупки');
+                        } else {
+                            updateLocalLastPurchase(activeTokenId, latestPurchase.id)
+                        }
+                    })
+                    .catch(console.error);
+            }
         }
     }, [purchases, activeTokenId]);
 
@@ -113,27 +132,34 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             name = name[0].toUpperCase() + name.slice(1)
             result.push({name, date: dates});
         });
-
+        console.log('result', result)
         setListMonth(result)
     }
 
-    function showListPurchases(monthName: string, tokenId: number) {
+    function showListPurchases(monthName: string, date: Date[], tokenId: number) {
         setIsPurchases(true)
         setActiveMonth(monthName)
-        fetchData(tokenId)
+        setSelectedMonth(date)
+        fetchData(tokenId, date)
     }
 
     function hasTodayPurchases(tokenId: number) {
-        const latestPurchase =  listPurchases.find(p => p.token_id === tokenId )
+        const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
         return !!latestPurchase && latestPurchase.id !== savedPurchase?.purchase_id
+    }
+
+    function handleDeleteBuyer() {
+        if (activeTokenId !== null) {
+            fetchData(activeTokenId, selectedMonth)
+        }
     }
 
     function updateLocalLastPurchase(tokenId: number, purchaseId: number) {
         const updatedLastPurchases = [...localLastPurchase]
         const existing = updatedLastPurchases.find(p => p.token_id === tokenId)
 
-        if(existing) {
+        if (existing) {
             existing.purchase_id = purchaseId
         } else {
             updatedLastPurchases.push({token_id: tokenId, purchase_id: purchaseId})
@@ -175,7 +201,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     <li key={i}
                                         onClick={() => {
                                             if (activeTokenId !== null) {
-                                                showListPurchases(date.name, activeTokenId);
+                                                showListPurchases(date.name, date.date, activeTokenId);
                                             }
                                         }}
                                         className={`${styles.month_item} ${activeMonth === date.name ? styles.text__active : ''}`}>
@@ -200,7 +226,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                             ) : purchases
                                 .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
                                 .map((buyer, i) =>
-                                    <CardBuyer key={buyer.id} buyer={buyer}/>
+                                    <CardBuyer
+                                        key={buyer.id}
+                                        buyer={buyer}
+                                        onDelete={handleDeleteBuyer}/>
                                 )}
                         </ul>
                     </InfoContainer>
