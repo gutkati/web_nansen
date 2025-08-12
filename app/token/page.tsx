@@ -10,24 +10,25 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
+  // Для production-сборки возвращаем заглушку
+  if (process.env.BUILD_TIME === 'true') {
+    return <div>Загрузка данных...</div>;
+  }
 
-    const isBuildTime = process.env.BUILD_TIME === 'true';
-    const isProd = process.env.NODE_ENV === 'production';
+  // Всегда делаем запросы при реальной работе приложения
+  try {
+    const tokens = await getTokens();
+    const listPurchases = await getPurchasesAll();
+    const lastPurchase = await getLastPurchase();
 
-    if (isBuildTime) {
-        return <div>Загрузка данных...</div>;
-    }
-
-// В продакшене или в dev-е после деплоя — работаем с базой
-    if (isProd || process.env.NODE_ENV === 'development') {
-        const tokens = await getTokens();
-        const listPurchases = await getPurchasesAll();
-        const lastPurchase = await getLastPurchase();
-
-        return (
-            <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-        );
-    }
+    return (
+      <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
+    );
+  } catch (error) {
+    console.error('Ошибка загрузки данных:', error);
+    return <div>Ошибка загрузки данных</div>;
+  }
+}
 
     // // Для production-сборки возвращаем заглушку
     // if (process.env.BUILD_TIME === 'true') {

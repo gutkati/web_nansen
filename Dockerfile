@@ -23,7 +23,8 @@ RUN npm run build
 FROM node:18-alpine AS runner
 
 WORKDIR /app
-
+# сбрасываем BUILD_TIME для runtime
+ENV BUILD_TIME=false
 # Устанавливаем только production-зависимости
 COPY --from=builder /app/package*.json ./
 RUN npm ci --only=production
@@ -36,10 +37,7 @@ COPY --from=builder /app/public ./public
 # Указываем порт (Next.js по умолчанию использует 3000)
 EXPOSE 3000
 
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
-ARG BUILD_TIME=false
-ENV BUILD_TIME=$BUILD_TIME
+ENV NODE_ENV=production
 
 # Запускаем сервер
 CMD ["npm", "start"]
