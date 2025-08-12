@@ -3,7 +3,7 @@ FROM node:18-alpine AS builder
 
 # Устанавливаем BUILD_TIME только для сборки
 ARG IS_BUILD=true
-ENV IS_BUILD=$IS_BUILD
+ENV NEXT_PUBLIC_IS_BUILD=$IS_BUILD
 
 WORKDIR /app
 
