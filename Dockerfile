@@ -1,6 +1,7 @@
 # Шаг 1: Сборка приложения (Builder stage)
 FROM node:18-alpine AS builder
 
+# Устанавливаем BUILD_TIME только для сборки
 ARG BUILD_TIME=true
 ENV BUILD_TIME=$BUILD_TIME
 

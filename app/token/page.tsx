@@ -10,16 +10,22 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-    if (process.env.NODE_ENV === 'production') {
+  // Для production-сборки возвращаем заглушку
+  if (process.env.BUILD_TIME === 'true') {
+    return <div>Загрузка данных...</div>
+  }
+
+  // В production-режиме (после деплоя) делаем реальные запросы
+  if (process.env.NODE_ENV === 'production') {
     const tokens = await getTokens()
     const listPurchases = await getPurchasesAll()
     const lastPurchase = await getLastPurchase()
-    console.log('all', listPurchases)
-    return (
-        <>
-            <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-        </>
 
+    return (
+      <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
     )
-    }
+  }
+
+  // Для dev-режима
+  return <div>Режим разработки</div>
 }
