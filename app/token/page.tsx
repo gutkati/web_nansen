@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function TokenPage() {
   // Для production-сборки возвращаем заглушку
-   if (process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+   if (process.env.NEXT_PUBLIC_IS_BUILD) {
     return <div>Загрузка фиганных...</div>;
   }
 
