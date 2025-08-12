@@ -75,7 +75,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     // записывает id последней закупки
     useEffect(() => {
         if (purchasesToken.length > 0 && activeTokenId !== null) {
-            console.log('purchases', purchasesToken)
+
             const latestPurchase = purchasesToken[0]; // т.к. сортировка по времени
             const purchaseDate = new Date(latestPurchase.timestamp);
             const selected = selectedMonth[0];
