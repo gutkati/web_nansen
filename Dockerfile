@@ -30,7 +30,7 @@ RUN npm ci --only=production
 # Копируем собранные файлы из builder-этапа
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./
+# COPY --from=builder /app/next.config.js ./ вроде как его нет
 
 # Указываем порт (Next.js по умолчанию использует 3000)
 EXPOSE 3000
