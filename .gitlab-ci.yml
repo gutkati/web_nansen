@@ -1,0 +1,70 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+
+build:
+  stage: build
+  image: docker:20.10
+  services:
+    - docker:20.10-dind
+  script:
+    - echo "Пушим в $IMAGE_TAG"
+    - docker build -t $IMAGE_TAG .
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker push $IMAGE_TAG
+  tags:
+    - prod
+
+deploy:
+  stage: deploy
+  image: debian:bullseye-slim
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - |
+      if [ "$SERVER_IP" == "94.141.160.222" ]; then
+        echo "Деплой на продакшен"
+        USER="root"
+        SSH_TARGET="$USER@172.17.0.1"
+        SSH_KEY="$PROD_SSH_PRIVATE_KEY"
+      else
+        USER="starscream"
+        echo "Деплой на тестовый сервер"
+        SSH_TARGET="$USER@$SERVER_IP"
+        SSH_KEY="$TEST_SSH_PRIVATE_KEY"
+      fi
+      echo "$SSH_KEY" > ~/.ssh/id_ed25519
+      chmod 600 ~/.ssh/id_ed25519
+      ssh-keyscan "${SSH_TARGET#*@}" >> ~/.ssh/known_hosts
+  script:
+    - |
+      echo "Начинаем деплой на $SSH_TARGET"
+      ssh "$SSH_TARGET" << EOF
+      set -e  # Выход при ошибке
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      docker pull "$IMAGE_TAG"
+      docker stop nansen-api || true && docker rm nansen-api || true
+      # Удаляем ВСЕ неиспользуемые образы
+      docker system prune -af --filter "until=24h" 2>/dev/null || true
+      docker run -d --name web_nansen \
+      --network mariadb_nansen_network \
+      -e DB_USER="${DB_USER}" \
+      -e DB_PASSWORD=$DB_PASSWORD \
+      -e DB_HOST=mariadb \
+      --restart unless-stopped \
+      "$IMAGE_TAG"
+  variables:
+    #SERVER_IP: '94.141.160.222'  #PROD
+    SERVER_IP: '92.61.20.162'  #TEST
+    DB_PASSWORD: $DB_PASSWORD
+    DB_USER: $DB_USER
+  tags:
+    - prod
+  # when: manual
+  only:
+    - main
