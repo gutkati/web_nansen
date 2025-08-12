@@ -10,23 +10,47 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-    // Для production-сборки возвращаем заглушку
-    if (process.env.BUILD_TIME === 'true') {
-        //return <div>Загрузка данных...</div>
-        const tokens = await getTokens()
-        const listPurchases = await getPurchasesAll()
-        const lastPurchase = await getLastPurchase()
+
+    const isBuildTime = process.env.BUILD_TIME === 'true';
+    const isProd = process.env.NODE_ENV === 'production';
+
+    if (isBuildTime) {
+        return <div>Загрузка данных...</div>;
+    }
+
+// В продакшене или в dev-е после деплоя — работаем с базой
+    if (isProd || process.env.NODE_ENV === 'development') {
+        const tokens = await getTokens();
+        const listPurchases = await getPurchasesAll();
+        const lastPurchase = await getLastPurchase();
 
         return (
             <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-        )
+        );
     }
-    console.log('Подключение', process.env.DB_NAME)
-    // В production-режиме (после деплоя) делаем реальные запросы
-    //if (process.env.NODE_ENV === 'production') {
 
+    // // Для production-сборки возвращаем заглушку
+    // if (process.env.BUILD_TIME === 'true') {
+    //     const tokens = await getTokens()
+    //     const listPurchases = await getPurchasesAll()
+    //     const lastPurchase = await getLastPurchase()
+    //
+    //     return (
+    //         <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
+    //     )
     // }
-
-    // Для dev-режима
-    // return <div>Режим разработки</div>
+    // console.log('Подключение', process.env.DB_NAME)
+    // // В production-режиме (после деплоя) делаем реальные запросы
+    // //if (process.env.NODE_ENV === 'production') {
+    // const tokens = await getTokens()
+    // const listPurchases = await getPurchasesAll()
+    // const lastPurchase = await getLastPurchase()
+    //
+    // return (
+    //     <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
+    // )
+    // // }
+    //
+    // // Для dev-режима
+    // // return <div>Режим разработки</div>
 }
