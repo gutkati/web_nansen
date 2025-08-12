@@ -53,12 +53,14 @@ export function usePurchaseData() {
                 }
                 console.log('data', purchases)
                 setDataFilterMonth(purchases)
-
+                return purchases
             } else {
                 setErrorPurchase(lisData.error || "Произошла ошибка")
+                return []
             }
         } catch (err) {
             setErrorPurchase("Ошибка запроса")
+            return []
         } finally {
             setLoadingPurchase(false)
         }

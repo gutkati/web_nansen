@@ -1,5 +1,6 @@
 "use client";
 import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import styles from './Token.module.scss';
 import InfoContainer from "@/app/components/infoContainer/InfoContainer";
 import colors from '../styles/_variables.module.scss';
@@ -57,6 +58,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         errorPurchase,
         fetchData
     } = usePurchaseData()
+
+    const router = useRouter();
 
     useEffect(() => {
         if (dates.length > 0) {
@@ -152,6 +155,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     function handleDeleteBuyer() {
         if (activeTokenId !== null) {
             fetchData(activeTokenId, selectedMonth)
+            router.refresh();
         }
     }
 
@@ -229,7 +233,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     <CardBuyer
                                         key={buyer.id}
                                         buyer={buyer}
-                                        onDelete={handleDeleteBuyer}/>
+                                        onDelete={ handleDeleteBuyer}/>
                                 )}
                         </ul>
                     </InfoContainer>
