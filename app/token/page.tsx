@@ -10,6 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
+    if (process.env.NODE_ENV === 'production' && process.env.BUILD_TIME) {
+        return <div>Данные будут подгружены на сервере</div>;
+    }
     const tokens = await getTokens()
     const listPurchases = await getPurchasesAll()
     const lastPurchase = await getLastPurchase()
