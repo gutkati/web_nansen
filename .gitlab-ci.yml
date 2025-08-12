@@ -53,7 +53,7 @@ deploy:
       docker system prune -af --filter "until=24h" 2>/dev/null || true
       docker run -d --name web_nansen \
       --network mariadb_nansen_network \
-      -p 3000:3000
+      -p 3000:3000 \
       -e DB_USER="${DB_USER}" \
       -e DB_PASSWORD=$DB_PASSWORD \
       -e DB_HOST=mariadb \
