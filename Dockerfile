@@ -1,8 +1,8 @@
 # Шаг 1: Сборка приложения (Builder stage)
 FROM node:18-alpine AS builder
 
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
+ARG BUILD_TIME=true
+ENV BUILD_TIME=$BUILD_TIME
 
 WORKDIR /app
 
