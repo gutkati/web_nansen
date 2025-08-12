@@ -1,5 +1,5 @@
 # Шаг 1: Сборка приложения (Builder stage)
-FROM node:20-alpine AS builder
+FROM node:18-alpine AS builder
 
 ARG NEXT_PUBLIC_IS_BUILD=true
 ENV NEXT_PUBLIC_IS_BUILD=$NEXT_PUBLIC_IS_BUILD
@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Шаг 2: Запуск (Production stage)
-FROM node:20-alpine AS runner
+FROM node:18-alpine AS runner
 
 WORKDIR /app
 
