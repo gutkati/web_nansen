@@ -1,8 +1,8 @@
 # Шаг 1: Сборка приложения (Builder stage)
 FROM node:18-alpine AS builder
 
-ARG NEXT_PUBLIC_IS_BUILD=true
-ENV NEXT_PUBLIC_IS_BUILD=$NEXT_PUBLIC_IS_BUILD
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
 
 WORKDIR /app
 
