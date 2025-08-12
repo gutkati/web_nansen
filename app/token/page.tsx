@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 export default async function TokenPage() {
   // Для production-сборки возвращаем заглушку
-  if (process.env.NEXT_PUBLIC_BUILD_TIME === 'true') {
-    return <div>Загрузка данных...</div>;
+   if (process.env.IS_BUILD) {
+    return <div>Загрузка фиганных...</div>;
   }
 
   // Всегда делаем запросы при реальной работе приложения
