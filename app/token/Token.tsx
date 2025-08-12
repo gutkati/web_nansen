@@ -10,6 +10,7 @@ import Loader from "@/app/components/loader/loader";
 import {usePurchaseData} from "@/app/hooks/usePurchaseData";
 import ButtonBack from "@/app/components/buttonBack/ButtonBack";
 import Notification from "@/app/components/notification/Notification";
+import ButtonAdd from "@/app/components/buttonAdd/ButtonAdd";
 
 type TokenType = {
     id: number;
@@ -76,37 +77,60 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     useEffect(() => {
         if (purchasesToken.length > 0 && activeTokenId !== null) {
 
-            const latestPurchase = purchasesToken[0]; // т.к. сортировка по времени
-            const purchaseDate = new Date(latestPurchase.timestamp);
-            const selected = selectedMonth[0];
+            const latestPurchase = purchasesToken[0]; // самая свежая покупка т.к. сортировка по времени
+            const purchaseDate = new Date(latestPurchase.timestamp); // дата свежей покупки
+            const selected = selectedMonth[0]; // первая дата из текущего выбранного месяца
 
+            // сравнить год самой свежей покупки и год выбранного месяца
+            // сравнить месяц самой свежей покупки и выбранный месяц
+            // sameMonth будет true, если последняя покупка была сделана в том же месяце, что и текущий выбранный.
             const sameMonth =
                 purchaseDate.getFullYear() === selected.getFullYear() &&
                 purchaseDate.getMonth() === selected.getMonth();
 
-            if (sameMonth) {
-                fetch('/api/saveLastPurchase', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        tokenId: activeTokenId,
-                        purchaseId: latestPurchase.id,
-                    }),
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.success) {
-                            console.warn('Ошибка при сохранении последней покупки');
-                        } else {
-                            updateLocalLastPurchase(activeTokenId, latestPurchase.id)
-                        }
-                    })
-                    .catch(console.error);
+            if (sameMonth && latestPurchase?.id) {
+                // значит мы можем сохранить этот purchaseId как последний просмотренный, чтобы убрать уведомление.
+                saveLastPurchase(activeTokenId, latestPurchase.id)
+            } else {
+                // Покупок в выбранном месяце нет — ищем предыдущий месяц с покупками
+                const previousMonthPurchase = purchasesToken.find(p => {
+                    const date = new Date(p.timestamp);
+                    return (
+                        date.getFullYear() < selected.getFullYear() ||
+                        (date.getFullYear() === selected.getFullYear() &&
+                            date.getMonth() < selected.getMonth())
+                    );
+                });
+
+                if (previousMonthPurchase) {
+                    saveLastPurchase(activeTokenId, previousMonthPurchase.id);
+                }
             }
         }
-    }, [purchases, activeTokenId]);
+    }, [purchasesToken, activeTokenId]);
+
+    async function saveLastPurchase(tokenId: number, purchaseId: number) {
+
+        fetch('/api/saveLastPurchase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tokenId,
+                purchaseId
+            }),
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    console.warn('Ошибка при сохранении последней покупки');
+                } else {
+                    updateLocalLastPurchase(tokenId, purchaseId)
+                }
+            })
+            .catch(console.error);
+    }
 
     function showListMonth(tokenId: number) {
         setActiveTokenId(tokenId)
@@ -135,6 +159,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             name = name[0].toUpperCase() + name.slice(1)
             result.push({name, date: dates});
         });
+
+        // сортировка по убыванию дат (чтобы последний месяц был первым)
+        result.sort((a, b) => b.date[0].getTime() - a.date[0].getTime());
+
         console.log('result', result)
         setListMonth(result)
     }
@@ -152,8 +180,14 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         return !!latestPurchase && latestPurchase.id !== savedPurchase?.purchase_id
     }
 
-    function handleDeleteBuyer() {
+    async function handleDeleteBuyer() {
         if (activeTokenId !== null) {
+
+            const updatedPurchases = await fetchData(activeTokenId);
+            const updatedDates = updatedPurchases.map(p => p.timestamp);
+
+            groupDatesByMonth(updatedDates);
+
             fetchData(activeTokenId, selectedMonth)
             router.refresh();
         }
@@ -176,17 +210,23 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         <div className={styles.token}>
 
             <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
-                <ButtonBack text='Главная'/>
+                <div>
+                    <ButtonBack text='Главная'/>
+                    <ButtonAdd/>
+                </div>
+
                 <ul className={styles.token__list}>
                     {tokens.map(token => {
                         const showNotification = hasTodayPurchases(token.id)
                         return (
                             <li key={token.id}
                                 onClick={() => showListMonth(token.id)}
-                                className={activeTokenId === token.id ? styles.text__active : ''}
+                                className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
                             >
                                 {showNotification && <Notification/>}
                                 <span>{token.name}</span>
+
+                                <div className={styles.token__remove}></div>
                             </li>
                         )
                     })}
@@ -233,7 +273,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     <CardBuyer
                                         key={buyer.id}
                                         buyer={buyer}
-                                        onDelete={ handleDeleteBuyer}/>
+                                        onDelete={handleDeleteBuyer}/>
                                 )}
                         </ul>
                     </InfoContainer>

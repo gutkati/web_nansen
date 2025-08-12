@@ -1,5 +1,4 @@
 import connection from "@/lib/db";
-import mysql from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2';
 
 type LastPurchaseRow = {
@@ -7,6 +6,12 @@ type LastPurchaseRow = {
 } & RowDataPacket;
 
 export async function saveLastPurchase(tokenId: number, purchaseId: number): Promise<void> {
+
+    if (typeof tokenId !== "number" || typeof purchaseId !== "number") {
+        console.warn("saveLastPurchase: некорректные данные", { tokenId, purchaseId });
+        return;
+    }
+
     const [rows] = await connection.query<LastPurchaseRow[]>(
         'SELECT purchase_id FROM last_purchase WHERE token_id = ?',
         [tokenId]
@@ -18,8 +23,7 @@ export async function saveLastPurchase(tokenId: number, purchaseId: number): Pro
         await connection.query(
             `INSERT INTO last_purchase (token_id, purchase_id)
              VALUES (?, ?) ON DUPLICATE KEY
-            UPDATE purchase_id =
-            VALUES (purchase_id)`,
+            UPDATE purchase_id = VALUES(purchase_id)`,
             [tokenId, purchaseId]);
     }
 }

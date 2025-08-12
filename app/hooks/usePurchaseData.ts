@@ -51,7 +51,7 @@ export function usePurchaseData() {
                         );
                     });
                 }
-                console.log('data', purchases)
+                console.log('data', data)
                 setDataFilterMonth(purchases)
                 return purchases
             } else {
