@@ -48,7 +48,7 @@ deploy:
       set -e  # Выход при ошибке
       docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
       docker pull "$IMAGE_TAG"
-      docker stop nansen-api || true && docker rm nansen-api || true
+      docker stop web_nansen || true && docker rm web_nansen || true
       # Удаляем ВСЕ неиспользуемые образы
       docker system prune -af --filter "until=24h" 2>/dev/null || true
       docker run -d --name web_nansen \
