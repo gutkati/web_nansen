@@ -36,8 +36,10 @@ COPY --from=builder /app/public ./public
 # Указываем порт (Next.js по умолчанию использует 3000)
 EXPOSE 3000
 
-ENV NODE_ENV=production
-ENV BUILD_TIME=false
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+ARG BUILD_TIME=false
+ENV BUILD_TIME=$BUILD_TIME
 
 # Запускаем сервер
 CMD ["npm", "start"]
