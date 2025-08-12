@@ -3,7 +3,7 @@ FROM node:18-alpine AS builder
 
 # Устанавливаем BUILD_TIME только для сборки
 ARG IS_BUILD=true
-ENV IS_BUILD=$BUILD_TIME
+ENV IS_BUILD=$IS_BUILD
 
 WORKDIR /app
 
@@ -23,8 +23,6 @@ RUN npm run build
 FROM node:18-alpine AS runner
 
 WORKDIR /app
-
-ENV NEXT_PUBLIC_BUILD_TIME=false
 
 # Устанавливаем только production-зависимости
 COPY --from=builder /app/package*.json ./
