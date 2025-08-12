@@ -55,13 +55,16 @@ deploy:
       --network mariadb_nansen_network \
       -p 3000:3000 \
       -e DB_USER="${DB_USER}" \
-      -e DB_PASSWORD=$DB_PASSWORD \
-      -e DB_HOST=mariadb \
+      -e DB_PASSWORD="${DB_PASSWORD}" \
+      -e DB_HOST="${DB_HOST}" \
+      -e DB_NAME="${DB_NAME" \
       --restart unless-stopped \
       "$IMAGE_TAG"
   variables:
     #SERVER_IP: '94.141.160.222'  #PROD
     SERVER_IP: '92.61.20.162'  #TEST
+    DB_HOST: $DB_HOST
+    DB_NAME: $DB_NAME
     DB_PASSWORD: $DB_PASSWORD
     DB_USER: $DB_USER
   tags:
