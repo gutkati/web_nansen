@@ -13,7 +13,7 @@ build:
     - docker:20.10-dind
   script:
     - echo "Пушим в $IMAGE_TAG"
-    - docker build -t $IMAGE_TAG .
+    - docker build --build-arg SKIP_DB=true -t $IMAGE_TAG .
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker push $IMAGE_TAG
   tags:
@@ -55,6 +55,7 @@ deploy:
       --network mariadb_nansen_network \
       -p 3000:3000 \
       -e DB_USER="${DB_USER}" \
+      -e DB_AVAILABLE=true \
       -e DB_PASSWORD="${DB_PASSWORD}" \
       -e DB_HOST="${DB_HOST}" \
       -e DB_NAME="${DB_NAME}" \

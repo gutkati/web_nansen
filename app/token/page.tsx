@@ -10,24 +10,24 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-
-    const isBuildTime = process.env.BUILD_TIME === 'true';
-    const isProd = process.env.NODE_ENV === 'production';
-
-    if (isBuildTime) {
-        return <div>Загрузка данных...</div>;
+  try {
+    if (process.env.SKIP_DB === 'true') {
+      // Возвращаем заглушку или пустые данные для билда
+      return <Token tokens={[]} listPurchases={[]} lastPurchase={[]} />;
     }
 
-// В продакшене или в dev-е после деплоя — работаем с базой
-    if (isProd || process.env.NODE_ENV === 'development') {
-        const tokens = await getTokens();
-        const listPurchases = await getPurchasesAll();
-        const lastPurchase = await getLastPurchase();
+    const [tokens, listPurchases, lastPurchase] = await Promise.all([
+      getTokens(),
+      getPurchasesAll(),
+      getLastPurchase()
+    ]);
 
-        return (
-            <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-        );
-    }
+    return <Token {...{ tokens, listPurchases, lastPurchase }} />;
+  } catch (error) {
+    console.error('DB Error:', error);
+    return <div>Ошибка загрузки данных</div>;
+  }
+}
 
     // // Для production-сборки возвращаем заглушку
     // if (process.env.BUILD_TIME === 'true') {
@@ -53,4 +53,3 @@ export default async function TokenPage() {
     //
     // // Для dev-режима
     // // return <div>Режим разработки</div>
-}
