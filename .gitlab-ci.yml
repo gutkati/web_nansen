@@ -13,7 +13,7 @@ build:
     - docker:20.10-dind
   script:
     - echo "Пушим в $IMAGE_TAG"
-    - docker build -build-arg SKIP_DB=true -t $IMAGE_TAG .
+    - docker build --build-arg SKIP_DB=true -t $IMAGE_TAG .
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker push $IMAGE_TAG
   tags:
