@@ -11,6 +11,9 @@ import {usePurchaseData} from "@/app/hooks/usePurchaseData";
 import ButtonBack from "@/app/components/buttonBack/ButtonBack";
 import Notification from "@/app/components/notification/Notification";
 import ButtonAdd from "@/app/components/buttonAdd/ButtonAdd";
+import ModalForm from "@/app/components/modalWindows/modalForm";
+import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
+import ModalAdd from "@/app/components/modalWindows/ModalAdd";
 
 type TokenType = {
     id: number;
@@ -40,6 +43,7 @@ type MonthType = {
 
 const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [activeTokenId, setActiveTokenId] = useState<number | null>(null)
+    const [activeTokenName, setActiveTokenName] = useState<string>('')
     const [isShowMonth, setIsShowMonth] = useState(false);
     const [isShowPurchases, setIsPurchases] = useState(false);
     const [listMonth, setListMonth] = useState<MonthType>([])
@@ -50,6 +54,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [clientPurchases, setClientPurchases] = useState<ListPurchases[]>(listPurchases)
 
     const [selectedMonth, setSelectedMonth] = useState<Date[] | []>([]);
+
+    const [isModalOpenAddToken, setIsModalOpenAddToken] = useState<boolean>(false)
+    const [isModalOpenRemoveToken, setIsModalOpenRemoveToken] = useState<boolean>(false)
+
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
     const {
@@ -132,6 +140,28 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             .catch(console.error);
     }
 
+    const handleDeleteToken = async (tokenId: number) => {
+        try {
+            const res = await fetch('/api/deleteToken', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({tokenId})
+            });
+
+            if (!res.ok) {
+                console.error('Ошибка при удалении');
+                return;
+            }
+
+            setIsModalOpenRemoveToken(false);
+            router.refresh(); // перезагрузить страницу после удаления токена
+        } catch (err) {
+            console.error('Сетевая ошибка при удалении:', err);
+        }
+    };
+
     function showListMonth(tokenId: number) {
         setActiveTokenId(tokenId)
         setIsShowMonth(true)
@@ -189,7 +219,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             groupDatesByMonth(updatedDates);
 
             fetchData(activeTokenId, selectedMonth)
-            router.refresh();
+            router.refresh(); // перезагрузить страницу после удаления покупки
         }
     }
 
@@ -206,30 +236,58 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         setLocalLastPurchase(updatedLastPurchases)
     }
 
+    function openModalCloseRemoveToken(tokenId: number, tokenName: string) {
+        setIsModalOpenRemoveToken(true)
+        setActiveTokenId(tokenId)
+        setActiveTokenName(tokenName)
+        setIsShowMonth(false)
+    }
+
+    function openModalTokenAdd() {
+        setIsModalOpenAddToken(true)
+    }
+
+    function closeModalToken() {
+        setIsModalOpenRemoveToken(false)
+        setIsModalOpenAddToken(false)
+    }
+
     return (
         <div className={styles.token}>
 
             <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
                 <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
-                    <ButtonAdd/>
+                    <ButtonAdd
+                        openModal={openModalTokenAdd}/>
                 </div>
 
                 <ul className={styles.token__list}>
-                    {tokens.map(token => {
-                        const showNotification = hasTodayPurchases(token.id)
-                        return (
-                            <li key={token.id}
-                                onClick={() => showListMonth(token.id)}
-                                className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
-                            >
-                                {showNotification && <Notification/>}
-                                <span>{token.name}</span>
+                    {tokens
+                        .slice() // создаём копию, чтобы не мутировать исходный массив
+                        .sort((a, b) => a.name.localeCompare(b.name)) // сортировка по имени
+                        .map(token => {
+                            const showNotification = hasTodayPurchases(token.id)
+                            return (
+                                <li key={token.id}
+                                    onClick={() => showListMonth(token.id)}
+                                    className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
+                                >
+                                    {showNotification && <Notification/>}
+                                    <span>{token.name}</span>
 
-                                <div className={styles.token__remove}></div>
-                            </li>
-                        )
-                    })}
+                                    <div
+                                        className={styles.token__remove}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            openModalCloseRemoveToken(token.id, token.name)
+                                        }}
+                                    >
+
+                                    </div>
+                                </li>
+                            )
+                        })}
                 </ul>
             </InfoContainer>
 
@@ -278,6 +336,30 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                         </ul>
                     </InfoContainer>
                     : ''
+            }
+
+            {
+                isModalOpenRemoveToken && activeTokenId && (
+                    <ModalForm children={<ModalRemovePurchase
+                        id={activeTokenId}
+                        text={`Удалить токен ${activeTokenName}`}
+                        onClose={closeModalToken}
+                        onConfirm={handleDeleteToken}
+                    />
+                    }/>
+                )
+            }
+
+            {
+                isModalOpenAddToken && (
+                    <ModalForm children={<ModalAdd
+                        id={activeTokenId}
+                        title="Добавить токен"
+                        onClose={closeModalToken}
+                        onConfirm={handleDeleteToken}
+                    />}/>
+                )
+
             }
         </div>
     );

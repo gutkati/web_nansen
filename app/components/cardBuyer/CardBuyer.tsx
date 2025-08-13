@@ -80,7 +80,6 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
 };
 
     function openModalClose() {
-        console.log('id', buyer.id)
         setIsModalOpen(true)
     }
 
@@ -133,6 +132,7 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
                     <ModalForm children={<ModalRemovePurchase
                         key={buyer.id}
                         id={buyer.id}
+                        text='Удалить данную покупку?'
                         onClose={closeModalClose}
                         onConfirm={handleDeleteBuyer}
                     />
