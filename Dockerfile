@@ -2,8 +2,8 @@
 FROM node:18-alpine AS builder
 
 # Устанавливаем BUILD_TIME только для сборки
-ARG BUILD_TIME=true
-ENV BUILD_TIME=$BUILD_TIME
+#ARG BUILD_TIME=true
+#ENV BUILD_TIME=$BUILD_TIME
 
 WORKDIR /app
 
@@ -33,7 +33,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 # COPY --from=builder /app/next.config.js ./ вроде как его нет
 
-ENV BUILD_TIME=false
+#ENV BUILD_TIME=false
 ENV NODE_ENV=production
 
 # Указываем порт (Next.js по умолчанию использует 3000)
