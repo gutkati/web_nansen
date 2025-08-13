@@ -17,8 +17,8 @@ RUN npm ci
 COPY . .
 
 # Собираем приложение
-
-RUN NEXT_PHASE=phase-production-build npm run build
+ARG SKIP_DB
+RUN SKIP_DB=${SKIP_DB} npm run build
 
 # Шаг 2: Запуск (Production stage)
 FROM node:18-alpine AS runner
