@@ -13,7 +13,7 @@ export default async function TokenPage() {
   try {
     if (process.env.SKIP_DB === 'true') {
       // Возвращаем заглушку или пустые данные для билда
-      return <Token tokens={[]} listPurchases={[]} lastPurchase={null} />;
+      return <Token tokens={[]} listPurchases={[]} lastPurchase={[]} />;
     }
 
     const [tokens, listPurchases, lastPurchase] = await Promise.all([
