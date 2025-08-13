@@ -10,46 +10,51 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-  try {
-    if (process.env.SKIP_DB === 'true') {
-      // Возвращаем заглушку или пустые данные для билда
-      return <Token tokens={[]} listPurchases={[]} lastPurchase={[]} />;
+    const isBuildTime = process.env.BUILD_TIME === 'true';
+    const isProd = process.env.NODE_ENV === 'production';
+
+    // Во время сборки (npm run build) показываем заглушку
+    if (isBuildTime) {
+        return <div>Загрузка данных...</div>;
     }
 
-    const [tokens, listPurchases, lastPurchase] = await Promise.all([
-      getTokens(),
-      getPurchasesAll(),
-      getLastPurchase()
-    ]);
+    // В рантайме — грузим данные
+    if (isProd || process.env.NODE_ENV === 'development') {
+        const tokens = await getTokens();
+        const listPurchases = await getPurchasesAll();
+        const lastPurchase = await getLastPurchase();
 
-    return <Token {...{ tokens, listPurchases, lastPurchase }} />;
-  } catch (error) {
-    console.error('DB Error:', error);
-    return <div>Ошибка загрузки данных</div>;
-  }
+        return (
+            <Token
+                tokens={tokens}
+                listPurchases={listPurchases}
+                lastPurchase={lastPurchase}
+            />
+        );
+    }
 }
 
-    // // Для production-сборки возвращаем заглушку
-    // if (process.env.BUILD_TIME === 'true') {
-    //     const tokens = await getTokens()
-    //     const listPurchases = await getPurchasesAll()
-    //     const lastPurchase = await getLastPurchase()
-    //
-    //     return (
-    //         <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-    //     )
-    // }
-    // console.log('Подключение', process.env.DB_NAME)
-    // // В production-режиме (после деплоя) делаем реальные запросы
-    // //if (process.env.NODE_ENV === 'production') {
-    // const tokens = await getTokens()
-    // const listPurchases = await getPurchasesAll()
-    // const lastPurchase = await getLastPurchase()
-    //
-    // return (
-    //     <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-    // )
-    // // }
-    //
-    // // Для dev-режима
-    // // return <div>Режим разработки</div>
+// // Для production-сборки возвращаем заглушку
+// if (process.env.BUILD_TIME === 'true') {
+//     const tokens = await getTokens()
+//     const listPurchases = await getPurchasesAll()
+//     const lastPurchase = await getLastPurchase()
+//
+//     return (
+//         <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
+//     )
+// }
+// console.log('Подключение', process.env.DB_NAME)
+// // В production-режиме (после деплоя) делаем реальные запросы
+// //if (process.env.NODE_ENV === 'production') {
+// const tokens = await getTokens()
+// const listPurchases = await getPurchasesAll()
+// const lastPurchase = await getLastPurchase()
+//
+// return (
+//     <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
+// )
+// // }
+//
+// // Для dev-режима
+// // return <div>Режим разработки</div>
