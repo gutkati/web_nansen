@@ -10,23 +10,30 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
+  // Режим сборки определяем по наличию специального флага
+  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
-   const isBuild = process.env.NODE_ENV === 'production' && !process.env.DB_AVAILABLE;
-   if (isBuild) {
-    return <div>Загрузка фиганных...</div>;
+  if (isBuildPhase) {
+    console.log('[BUILD] Skipping DB requests');
+    return (
+      <Token
+        tokens={[]}
+        listPurchases={[]}
+        lastPurchase={null}
+      />
+    );
   }
 
-  // Всегда делаем запросы при реальной работе приложения
   try {
-    const tokens = await getTokens();
-    const listPurchases = await getPurchasesAll();
-    const lastPurchase = await getLastPurchase();
+    const [tokens, listPurchases, lastPurchase] = await Promise.all([
+      getTokens(),
+      getPurchasesAll(),
+      getLastPurchase()
+    ]);
 
-    return (
-      <Token tokens={tokens} listPurchases={listPurchases} lastPurchase={lastPurchase}/>
-    );
+    return <Token {...{ tokens, listPurchases, lastPurchase }} />;
   } catch (error) {
-    console.error('Ошибка загрузки данных:', error);
+    console.error('DB Error:', error);
     return <div>Ошибка загрузки данных</div>;
   }
 }
