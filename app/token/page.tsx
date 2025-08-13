@@ -48,4 +48,4 @@ export default async function TokenPage() {
 // // Для dev-режима
 // // return <div>Режим разработки</div>
 
-//    "build": "BUILD_TIME=true next build",
+//
