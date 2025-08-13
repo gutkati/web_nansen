@@ -19,7 +19,7 @@ export default async function TokenPage() {
       <Token
         tokens={[]}
         listPurchases={[]}
-        lastPurchase={null}
+        lastPurchase={[]}
       />
     );
   }
