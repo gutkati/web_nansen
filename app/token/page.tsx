@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function TokenPage() {
 
    const isBuild = process.env.NODE_ENV === 'production' && !process.env.DB_AVAILABLE;
-   if isBuild {
+   if (isBuild) {
     return <div>Загрузка фиганных...</div>;
   }
 
