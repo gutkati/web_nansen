@@ -1,3 +1,4 @@
+"use client"
 import React, {useState} from 'react';
 import styles from './CardBuyer.module.scss'
 import ModalForm from "@/app/components/modalWindows/modalForm";

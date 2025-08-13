@@ -10,16 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-    const isBuildTime = process.env.BUILD_TIME === 'true';
-    const isProd = process.env.NODE_ENV === 'production';
-
-    // Во время сборки (npm run build) показываем заглушку
-    if (isBuildTime) {
-        return <div>Загрузка данных...</div>;
-    }
-
-    // В рантайме — грузим данные
-    if (isProd || process.env.NODE_ENV === 'development') {
         const tokens = await getTokens();
         const listPurchases = await getPurchasesAll();
         const lastPurchase = await getLastPurchase();
@@ -31,7 +21,6 @@ export default async function TokenPage() {
                 lastPurchase={lastPurchase}
             />
         );
-    }
 }
 
 // // Для production-сборки возвращаем заглушку
@@ -58,3 +47,5 @@ export default async function TokenPage() {
 //
 // // Для dev-режима
 // // return <div>Режим разработки</div>
+
+//    "build": "BUILD_TIME=true next build",
