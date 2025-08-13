@@ -33,13 +33,16 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 # COPY --from=builder /app/next.config.js ./ вроде как его нет
 
+ENV BUILD_TIME=false
+ENV NODE_ENV=production
+
 # Указываем порт (Next.js по умолчанию использует 3000)
 EXPOSE 3000
 
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
-ARG BUILD_TIME=false
-ENV BUILD_TIME=$BUILD_TIME
+#ARG NODE_ENV=production
+#ENV NODE_ENV=$NODE_ENV
+#ARG BUILD_TIME=false
+#ENV BUILD_TIME=$BUILD_TIME
 
 # Запускаем сервер
 CMD ["npm", "start"]

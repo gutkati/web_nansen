@@ -210,7 +210,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         <div className={styles.token}>
 
             <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
-                <div>
+                <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
                     <ButtonAdd/>
                 </div>
