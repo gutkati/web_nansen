@@ -17,8 +17,8 @@ RUN npm ci
 COPY . .
 
 # Собираем приложение
-ARG NEXT_PUBLIC_IS_BUILD_TIME=true
-RUN NEXT_PUBLIC_IS_BUILD=$NEXT_PUBLIC_IS_BUILD_TIM npm run build
+
+RUN DB_AVAILABLE=false npm run build
 
 # Шаг 2: Запуск (Production stage)
 FROM node:18-alpine AS runner

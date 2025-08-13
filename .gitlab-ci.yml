@@ -55,6 +55,7 @@ deploy:
       --network mariadb_nansen_network \
       -p 3000:3000 \
       -e DB_USER="${DB_USER}" \
+      -e DB_AVAILABLE=true \
       -e DB_PASSWORD="${DB_PASSWORD}" \
       -e DB_HOST="${DB_HOST}" \
       -e DB_NAME="${DB_NAME}" \
