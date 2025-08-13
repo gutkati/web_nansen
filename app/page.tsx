@@ -3,7 +3,7 @@ import Header from "@/app/components/header/Header";
 import ButtonLink from "@/app/components/buttonLink/ButtonLink";
 import colors from './styles/_variables.module.scss'
 
-export default function App() {
+export default async function App() {
 
     return (
         <div className={styles.app}>
