@@ -18,7 +18,7 @@ COPY . .
 
 # Собираем приложение
 
-RUN DB_AVAILABLE=false npm run build
+RUN NEXT_PHASE=phase-production-build npm run build
 
 # Шаг 2: Запуск (Production stage)
 FROM node:18-alpine AS runner
