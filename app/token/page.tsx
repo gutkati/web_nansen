@@ -10,8 +10,17 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
+    export default async function TokenPage() {
+  // Отладочный вывод в консоль сервера (или браузера, если есть гидратация)
+  console.log('[DEBUG] Build environment check:', {
+    isBuildTime: !!process.env.NEXT_PUBLIC_IS_BUILD_TIME,
+    nodeEnv: process.env.NODE_ENV,
+    isServer: typeof window === 'undefined',
+    runtime: process.env.NEXT_RUNTIME
+  });
+
   // Для production-сборки возвращаем заглушку
-   if (process.env.NEXT_PUBLIC_IS_BUILD) {
+   if (typeof window === 'undefined' && process.env.NEXT_PUBLIC_IS_BUILD_TIME) {
     return <div>Загрузка фиганных...</div>;
   }
 

@@ -2,7 +2,7 @@
 FROM node:18-alpine AS builder
 
 # Устанавливаем BUILD_TIME только для сборки
-ARG IS_BUILD=true
+
 #ENV NEXT_PUBLIC_IS_BUILD=$IS_BUILD
 
 WORKDIR /app
@@ -17,7 +17,8 @@ RUN npm ci
 COPY . .
 
 # Собираем приложение
-RUN NEXT_PUBLIC_IS_BUILD=$IS_BUILD npm run build
+ARG NEXT_PUBLIC_IS_BUILD_TIME=true
+RUN NEXT_PUBLIC_IS_BUILD=$NEXT_PUBLIC_IS_BUILD_TIM npm run build
 
 # Шаг 2: Запуск (Production stage)
 FROM node:18-alpine AS runner
