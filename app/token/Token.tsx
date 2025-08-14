@@ -353,10 +353,9 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             {
                 isModalOpenAddToken && (
                     <ModalForm children={<ModalAdd
-                        id={activeTokenId}
                         title="Добавить токен"
                         onClose={closeModalToken}
-                        onConfirm={handleDeleteToken}
+                        // onConfirm={handleDeleteToken}
                     />}/>
                 )
 
