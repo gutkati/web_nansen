@@ -23,13 +23,13 @@
     & .add__input {
       outline: none;
       width: 100%;
-      border-radius: 10px;
+      border-radius: 5px;
       padding: 10px;
       background-color: inherit;
       color: $text-color;
       border: 2px solid $grey-color;
       box-shadow: inset $box-shadow;
-      margin: 10px 0 10px 0;
+      margin: 10px 0 5px 0;
       transition: all .3s ease;
 
       &:focus {
@@ -45,6 +45,13 @@
       color: $error-color;
       font-size: 12px;
     }
+  }
+
+  .add__container {
+    width: 100%;
+    display: flex;
+    gap: 25px;
+    margin-top: 15px;
   }
 
   & .add__btns {
