@@ -58,6 +58,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [isModalOpenAddToken, setIsModalOpenAddToken] = useState<boolean>(false)
     const [isModalOpenRemoveToken, setIsModalOpenRemoveToken] = useState<boolean>(false)
 
+    const [buyerTypes, setBuyerTypes] = useState<Record<string, 'smart' | 'spec' | null>>({});
+
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
     const {
@@ -117,6 +119,18 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         }
     }, [purchasesToken, activeTokenId]);
 
+    useEffect(() => {
+        const initialTypes: Record<string, 'smart' | 'spec' | null> = {};
+        purchasesToken.forEach(buyer => {
+            if (buyer.buyer_type === 'smart' || buyer.buyer_type === 'spec') {
+                initialTypes[buyer.address] = buyer.buyer_type;
+            } else {
+                initialTypes[buyer.address] = null;
+            }
+        });
+        setBuyerTypes(initialTypes);
+    }, [purchasesToken]);
+
     async function saveLastPurchase(tokenId: number, purchaseId: number) {
 
         fetch('/api/saveLastPurchase', {
@@ -159,6 +173,50 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             router.refresh(); // перезагрузить страницу после удаления токена
         } catch (err) {
             console.error('Сетевая ошибка при удалении:', err);
+        }
+    };
+
+    async function handleDeleteBuyer() {
+        if (activeTokenId !== null) {
+
+            const updatedPurchases = await fetchData(activeTokenId);
+            const updatedDates = updatedPurchases.map(p => p.timestamp);
+
+            groupDatesByMonth(updatedDates);
+
+            fetchData(activeTokenId, selectedMonth)
+            router.refresh(); // перезагрузить страницу после удаления покупки
+        }
+    }
+
+    const handleBuyerTypeChange = async (address: string, value: 'smart' | 'spec') => {
+        const currentType = buyerTypes[address] || null;
+        const newType = currentType === value ? null : value;
+
+        setBuyerTypes(prev => ({
+            ...prev,
+            [address]: newType
+        }));
+
+        try {
+            const res = await fetch("/api/updateBuyerType", {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    buyer_type: newType,
+                    address
+                })
+            });
+
+            const result = await res.json();
+            if (!res.ok) {
+                console.error("Ошибка при обновлении:", result.error);
+                // откат
+                setBuyerTypes(prev => ({...prev, [address]: currentType}));
+            }
+        } catch (err) {
+            console.error("Сетевая ошибка:", err);
+            setBuyerTypes(prev => ({...prev, [address]: currentType}));
         }
     };
 
@@ -208,19 +266,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
         return !!latestPurchase && latestPurchase.id !== savedPurchase?.purchase_id
-    }
-
-    async function handleDeleteBuyer() {
-        if (activeTokenId !== null) {
-
-            const updatedPurchases = await fetchData(activeTokenId);
-            const updatedDates = updatedPurchases.map(p => p.timestamp);
-
-            groupDatesByMonth(updatedDates);
-
-            fetchData(activeTokenId, selectedMonth)
-            router.refresh(); // перезагрузить страницу после удаления покупки
-        }
     }
 
     function updateLocalLastPurchase(tokenId: number, purchaseId: number) {
@@ -331,7 +376,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     <CardBuyer
                                         key={buyer.id}
                                         buyer={buyer}
-                                        onDelete={handleDeleteBuyer}/>
+                                        onDelete={handleDeleteBuyer}
+                                        buyerType={buyerTypes[buyer.address] || null}
+                                        handleTypeBuyer={handleBuyerTypeChange}
+                                    />
                                 )}
                         </ul>
                     </InfoContainer>

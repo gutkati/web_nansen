@@ -42,7 +42,7 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
 
          if (!trimmedName.trim()) {
             setErrorName(requiredField)
-        } else if (trimmedName.length > 30) {
+        } else if (trimmedName.length > 50) {
             setErrorName('Имя не более 50 символов')
         } else {
             setErrorName('')

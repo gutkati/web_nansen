@@ -9,6 +9,7 @@ interface PurchaseData {
     current_balance: string;   // DECIMAL(18,2) представлен как string
     timestamp: string;
     show_key: number | null;
+    buyer_type: string | null;
 }
 
 export function usePurchaseData() {

@@ -13,19 +13,28 @@ type BuyerProps = {
         current_balance: string;
         timestamp: string;
         show_key: number | null;
+        buyer_type: string | null;
     };
     onDelete: () => void;
+    buyerType: 'smart' | 'spec' | null;
+    handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
 }
 
-const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
-    // const [buyers, setBuyers] = useState(buyer | [])
+const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer}) => {
+
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false) // чекбокс
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
         return date.toLocaleDateString('ru-RU')
     }
+
+    const linkClass = buyerType === 'smart'
+            ? styles.link__smart
+        : buyerType === 'spec'
+            ? styles.link__spec
+            : '';
 
     const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.checked;
@@ -58,26 +67,26 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
     }
 
     const handleDeleteBuyer = async (id: number) => {
-    try {
-        const res = await fetch('/api/deletePurchase', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id })
-        });
+        try {
+            const res = await fetch('/api/deletePurchase', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({id})
+            });
 
-        if (!res.ok) {
-            console.error('Ошибка при удалении');
-            return;
+            if (!res.ok) {
+                console.error('Ошибка при удалении');
+                return;
+            }
+
+            onDelete()
+            setIsModalOpen(false);
+        } catch (err) {
+            console.error('Сетевая ошибка при удалении:', err);
         }
-
-        onDelete()
-        setIsModalOpen(false);
-    } catch (err) {
-        console.error('Сетевая ошибка при удалении:', err);
-    }
-};
+    };
 
     function openModalClose() {
         setIsModalOpen(true)
@@ -96,7 +105,7 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
 
             </div>
 
-            <div className={styles.card__link}>
+            <div className={`${styles.card__link} ${linkClass}`}>
                 <a href={`https://app.nansen.ai/profiler?address=${buyer.address}&chain=all`}
                    target='_blank'>{buyer.address}</a>
             </div>
@@ -118,15 +127,49 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete}) => {
                 <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>
             </div>
 
-            <div className={`${styles.card__info} ${styles.card__viewing}`}>
-                <label htmlFor={`viewing-${buyer.address}`}>Просмотр</label>
-                <input
-                    type="checkbox"
-                    id={`viewing-${buyer.address}`}
-                    checked={showKey}
-                    onChange={handleCheckboxChange}
-                />
+            <div className={styles.card__containercheck}>
+                <div className={`${styles.card__viewing}`}>
+                    <label htmlFor={`viewing-${buyer.address}`}>Просмотр</label>
+                    <input
+                        type="checkbox"
+                        id={`viewing-${buyer.address}`}
+                        checked={showKey}
+                        onChange={handleCheckboxChange}
+                    />
+                </div>
+
+                <div className={`${styles.card__viewing}`}>
+                    <label htmlFor={`smart-${buyer.address}`} className={styles.label__smart}>Смарт</label>
+                    <input
+                        className={styles.inp__smart}
+                        type="checkbox"
+                        name={`type-${buyer.address}`} // одинаковое name для группы
+                        id={`smart-${buyer.address}`}
+                        value='smart'
+                        checked={buyerType === 'smart'}
+                        onChange={() => handleTypeBuyer(buyer.address, 'smart')}
+                    />
+                </div>
+
+                <div className={`${styles.card__viewing}`}>
+                    <label htmlFor={`spec-${buyer.address}`} className={styles.label__spec}>Спекулянт</label>
+                    <input
+                        className={styles.inp__spec}
+                        type="checkbox"
+                        name={`type-${buyer.address}`} // одинаковое name для группы
+                        id={`spec-${buyer.address}`}
+                        value='spec'
+                        checked={buyerType === 'spec'}
+                        onChange={() => handleTypeBuyer(buyer.address, 'spec')}
+                    />
+                </div>
             </div>
+
+            <div className={`${styles.card__info} ${styles.card__wallet}`}>
+                <span>Убрать кошельки из списка</span>
+            </div>
+
+
             {
                 isModalOpen && (
                     <ModalForm children={<ModalRemovePurchase

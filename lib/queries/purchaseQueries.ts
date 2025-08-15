@@ -9,11 +9,12 @@ interface Purchase {
     current_balance: string;
     timestamp: string;
     show_key: number | null;
+    buyer_type: string | null;
 }
 
 export async function getPurchaseByTokenId(tokenId: number): Promise<Purchase[]> {
     const [rows] = await connection.query(
-        'SELECT id, token_id, address, address_labels, bought_usd_volume, current_balance, show_key, timestamp FROM bought_sold WHERE token_id = ?',
+        'SELECT id, token_id, address, address_labels, bought_usd_volume, current_balance, show_key, buyer_type, timestamp FROM bought_sold WHERE token_id = ?',
         [tokenId]
     )
 
