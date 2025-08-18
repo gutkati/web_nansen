@@ -14,11 +14,21 @@ import ButtonAdd from "@/app/components/buttonAdd/ButtonAdd";
 import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 import ModalAdd from "@/app/components/modalWindows/ModalAdd";
+import AddTokenMessage from "@/app/components/message/AddTokenMessage";
 
 type TokenType = {
     id: number;
     name: string;
+    added_at: Date | null;
 };
+
+type Token = {
+    name: string;
+    token_address: string;
+    chain: string;
+    url: string;
+    trade_volume: number;
+}
 
 type ListPurchases = {
     id: number;
@@ -60,6 +70,9 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
     const [buyerTypes, setBuyerTypes] = useState<Record<string, 'smart' | 'spec' | null>>({});
 
+    const [successMessageAddToken, setSuccessMessageAddToken] = useState<boolean>(false);
+    const [successMessageDeleteToken, setSuccessMessageDeleteToken] = useState<boolean>(false);
+    const [nameAddToken, setNameAddToken] = useState<string>('')
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
     const {
@@ -71,6 +84,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     } = usePurchaseData()
 
     const router = useRouter();
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    //const ONE_WEEK_MS = 24 * 60 * 60 * 1000;
 
     useEffect(() => {
         if (dates.length > 0) {
@@ -154,6 +169,31 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             .catch(console.error);
     }
 
+    const handleAddToken = async (newToken: Token) => {
+        try {
+            const res = await fetch('/api/addToken', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({newToken})
+            });
+
+            if (!res.ok) {
+                console.error('Ошибка при добавлении токена');
+                return;
+            }
+
+            setIsModalOpenAddToken(false);
+            router.refresh(); // обновляем список токенов
+            setNameAddToken(newToken.name)
+            setSuccessMessageAddToken(true)
+            setTimeout(() => setSuccessMessageAddToken(false), 3000)
+        } catch (err) {
+            console.error('Сетевая ошибка при добавлении токена:', err);
+        }
+    }
+
     const handleDeleteToken = async (tokenId: number) => {
         try {
             const res = await fetch('/api/deleteToken', {
@@ -171,6 +211,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
             setIsModalOpenRemoveToken(false);
             router.refresh(); // перезагрузить страницу после удаления токена
+
+            setNameAddToken(activeTokenName)
+            setSuccessMessageDeleteToken(true)
+            setTimeout(() => setSuccessMessageDeleteToken(false), 3000)
         } catch (err) {
             console.error('Сетевая ошибка при удалении:', err);
         }
@@ -286,6 +330,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         setActiveTokenId(tokenId)
         setActiveTokenName(tokenName)
         setIsShowMonth(false)
+        setIsPurchases(false)
     }
 
     function openModalTokenAdd() {
@@ -313,13 +358,14 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                         .sort((a, b) => a.name.localeCompare(b.name)) // сортировка по имени
                         .map(token => {
                             const showNotification = hasTodayPurchases(token.id)
+                            const isNew = token.added_at ? (new Date().getTime() - new Date(token.added_at).getTime()) < ONE_WEEK_MS : false
                             return (
                                 <li key={token.id}
                                     onClick={() => showListMonth(token.id)}
                                     className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
                                 >
                                     {showNotification && <Notification/>}
-                                    <span>{token.name}</span>
+                                    <span>{token.name} {isNew && <span className={styles.newLabel}>(new)</span>}</span>
 
                                     <div
                                         className={styles.token__remove}
@@ -403,10 +449,22 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                     <ModalForm children={<ModalAdd
                         title="Добавить токен"
                         onClose={closeModalToken}
-                        // onConfirm={handleDeleteToken}
+                        onConfirm={handleAddToken}
                     />}/>
                 )
 
+            }
+
+            {
+                successMessageAddToken && (
+                    <AddTokenMessage text={`Токен ${nameAddToken} успешно добавлен!`}/>
+                )
+            }
+
+            {
+                successMessageDeleteToken && (
+                    <AddTokenMessage text={`Токен ${nameAddToken} успешно удален!`}/>
+                )
             }
         </div>
     );

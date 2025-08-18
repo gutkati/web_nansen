@@ -3,13 +3,21 @@ import React, {useState} from 'react';
 import stylesRemove from "@/app/components/modalWindows/ModalRemovePurchase.module.scss";
 import styles from './ModalAdd.module.scss'
 
+type Token = {
+    name: string;
+    token_address: string;
+    chain: string;
+    url: string;
+    trade_volume: number;
+}
+
 type ModalAddProps = {
     title: string;
     onClose?: () => void;
-    // onConfirm: (id:number) => void;
+    onConfirm: (newToken: Token) => void;
 }
 
-const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
+const ModalAdd: React.FC<ModalAddProps> = ({title, onClose, onConfirm}) => {
     const [link, setLink] = useState<string>('')
     const [errorLink, setErrorLink] = useState<string>('')
     const [name, setName] = useState<string>('')
@@ -23,7 +31,6 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
         const pattern = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,6}(:\d+)?(\/.*)?$/i;
         return pattern.test(value);
     };
-
 
     const handleBlurLink = () => {
         const trimmedLink = link.trim();
@@ -40,7 +47,7 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
     const handleBlurName = () => {
         const trimmedName = name.trim();
 
-         if (!trimmedName.trim()) {
+        if (!trimmedName.trim()) {
             setErrorName(requiredField)
         } else if (trimmedName.length > 50) {
             setErrorName('Имя не более 50 символов')
@@ -74,7 +81,30 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
             setErrorLink(textErrorLink);
             return;
         }
-        setErrorLink('')
+        if (!name.trim()) {
+            setErrorName(requiredField);
+            return;
+        }
+        if (!price.trim() || Number(price) <= 0) {
+            setErrorPrice('Введите цену');
+            return;
+        }
+
+        // парсим токен из ссылки
+        const urlObj = new URL(link);
+        const tokenAddress = urlObj.searchParams.get("tokenAddress") || "";
+        const chain = urlObj.searchParams.get("chain") || "";
+
+        const newToken: Token = {
+            name: name.trim().toUpperCase(),
+            token_address: tokenAddress,
+            chain: chain,
+            url: link.trim(),
+            trade_volume: Number(price)
+        };
+
+        onConfirm(newToken); // отдаем родителю
+        onClose?.(); // закрываем модалку
     }
 
     return (
@@ -131,7 +161,6 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
                 <button
                     className={`${styles.btns} ${styles.btn__add}`}
                     type='submit'
-                    // onClick={() => onConfirm(id)}
                 >
                     Добавить
                 </button>
@@ -140,6 +169,6 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose}) => {
     );
 };
 
-// https://app.nansen.ai/token-god-mode?tokenAddress=0x0001a500a6b18995b03f44bb040a5ffc28e45cb0&chain=ethereum
+// https://app.nansen.ai/token-god-mode?tokenAddress=0x0001a800a6b18995b03f44bb040a5ffc28e45cb0&chain=ethereum
 
 export default ModalAdd;

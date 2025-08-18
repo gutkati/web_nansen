@@ -1,0 +1,13 @@
+@import "../../styles/_variables.module";
+
+.add__mess {
+  padding: 15px 30px;
+  border-radius: 5px;
+  background-color: $message-color;
+  color: $text-color;
+  box-shadow: $box_shadow;
+  position: absolute;
+  bottom: 10%;
+  left: 40%;
+  z-index: 1000;
+}

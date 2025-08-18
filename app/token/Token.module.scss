@@ -82,6 +82,10 @@
             opacity: 1;
           }
         }
+
+        & .newLabel {
+          color: rgba(206, 151, 255, .9);
+        }
       }
 
       &.text__active {

@@ -52,7 +52,7 @@
     }
   }
 
-  & .link__smart a{
+  & .link__smart a {
     color: $lilac-color;
   }
 
@@ -140,19 +140,24 @@
     }
   }
 
-  & .card__wallet span {
-    font-size: 14px;
-    color: $text-color;
-    opacity: .5;
-    transition: all ease .2s;
+  & .card__wallet {
+    margin-top: 8px;
 
-    &:hover {
-      opacity: .8;
-      cursor: pointer;
+    & span {
+      font-size: 14px;
+      color: $text-color;
+      opacity: .5;
+      transition: all ease .2s;
+
+      &:hover {
+        opacity: .8;
+        cursor: pointer;
+      }
+
+      &:active {
+        opacity: 1;
+      }
     }
 
-    &:active {
-      opacity: 1;
-    }
   }
 }
