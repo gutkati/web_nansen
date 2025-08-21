@@ -18,9 +18,10 @@ type BuyerProps = {
     onDelete: () => void;
     buyerType: 'smart' | 'spec' | null;
     handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
+    hideBuyerBlackList: (address: string) => void;
 }
 
-const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer}) => {
+const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer, hideBuyerBlackList}) => {
 
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false) // чекбокс
@@ -165,7 +166,10 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 </div>
             </div>
 
-            <div className={`${styles.card__info} ${styles.card__wallet}`}>
+            <div
+                className={`${styles.card__info} ${styles.card__wallet}`}
+                onClick={() => hideBuyerBlackList(buyer.address)}
+            >
                 <span>Убрать кошельки из списка</span>
             </div>
 

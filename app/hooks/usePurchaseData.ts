@@ -36,8 +36,9 @@ export function usePurchaseData() {
             console.log('lisData', lisData)
             if (res.ok) {
                 let purchases = lisData as PurchaseData[];
+
                 setData(purchases.reverse())
-                // purchases.reverse()
+
                 //Фильтрация по датам, если переданы
                 if (filterDates && filterDates.length > 0) {
                     const baseDate = new Date(filterDates[0]);

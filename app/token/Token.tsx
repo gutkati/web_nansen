@@ -59,9 +59,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [listMonth, setListMonth] = useState<MonthType>([])
     const [messageMonth, setMessageMonth] = useState<string>('')
     const [activeMonth, setActiveMonth] = useState<string | null>(null)
-    const [isNotification, setIsNotification] = useState(false)
     const [localLastPurchase, setLocalLastPurchase] = useState<LastPurchase[]>(lastPurchase)
-    const [clientPurchases, setClientPurchases] = useState<ListPurchases[]>(listPurchases)
 
     const [selectedMonth, setSelectedMonth] = useState<Date[] | []>([]);
 
@@ -89,25 +87,27 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
     useEffect(() => {
         if (dates.length > 0) {
+            console.log('dates', dates)
             groupDatesByMonth(dates)
             setMessageMonth('')
             setActiveMonth(null)
         } else {
+            console.log('dates2', dates)
             setListMonth([])
             setMessageMonth('Покупок не было!')
         }
     }, [dates])
 
-    // записывает id последней закупки
+    // записывает id последней покупки
     useEffect(() => {
-        if (purchasesToken.length > 0 && activeTokenId !== null) {
+        if (purchasesToken.length > 0 && activeTokenId !== null && isShowPurchases) {
 
             const latestPurchase = purchasesToken[0]; // самая свежая покупка т.к. сортировка по времени
+
+            //setActiveTokenId(latestPurchase)
             const purchaseDate = new Date(latestPurchase.timestamp); // дата свежей покупки
             const selected = selectedMonth[0]; // первая дата из текущего выбранного месяца
 
-            // сравнить год самой свежей покупки и год выбранного месяца
-            // сравнить месяц самой свежей покупки и выбранный месяц
             // sameMonth будет true, если последняя покупка была сделана в том же месяце, что и текущий выбранный.
             const sameMonth =
                 purchaseDate.getFullYear() === selected.getFullYear() &&
@@ -132,7 +132,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                 }
             }
         }
-    }, [purchasesToken, activeTokenId]);
+    }, [purchasesToken, activeTokenId, selectedMonth]);
 
     useEffect(() => {
         const initialTypes: Record<string, 'smart' | 'spec' | null> = {};
@@ -220,19 +220,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         }
     };
 
-    async function handleDeleteBuyer() {
-        if (activeTokenId !== null) {
-
-            const updatedPurchases = await fetchData(activeTokenId);
-            const updatedDates = updatedPurchases.map(p => p.timestamp);
-
-            groupDatesByMonth(updatedDates);
-
-            fetchData(activeTokenId, selectedMonth)
-            router.refresh(); // перезагрузить страницу после удаления покупки
-        }
-    }
-
     const handleBuyerTypeChange = async (address: string, value: 'smart' | 'spec') => {
         const currentType = buyerTypes[address] || null;
         const newType = currentType === value ? null : value;
@@ -264,6 +251,41 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         }
     };
 
+    async function getUpdatedListBuyer() {
+        if (activeTokenId !== null) {
+
+            const updatedPurchases = await fetchData(activeTokenId);
+            const updatedDates = updatedPurchases.map(p => p.timestamp);
+
+            groupDatesByMonth(updatedDates);
+
+            fetchData(activeTokenId, selectedMonth)
+            router.refresh(); // перезагрузить страницу после удаления покупки
+        }
+    }
+
+    const hideBuyerBlackList = async (address: string) => {
+
+        try {
+            const res = await fetch("/api/addBuyerBlackList", {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    address
+                })
+            });
+
+            if (!res.ok) {
+                console.error("Ошибка при добавлении кошелька в черный список:");
+            }
+            // Обновляем список покупок после внесения в черный список
+            getUpdatedListBuyer()
+
+        } catch (err) {
+            console.error("Сетевая ошибка:", err);
+        }
+    }
+
     function showListMonth(tokenId: number) {
         setActiveTokenId(tokenId)
         setIsShowMonth(true)
@@ -272,6 +294,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     }
 
     function groupDatesByMonth(dates: string[]) {
+        if (!dates) return
         const monthMap = new Map<string, Date[]>();
 
         dates.forEach(dateStr => {
@@ -309,7 +332,11 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     function hasTodayPurchases(tokenId: number) {
         const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
-        return !!latestPurchase && latestPurchase.id !== savedPurchase?.purchase_id
+
+        if (!latestPurchase) return false; // покупок вообще нет
+         if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
+        //return latestPurchase.id > (savedPurchase?.purchase_id ?? 0)
+         return latestPurchase.id > savedPurchase.purchase_id
     }
 
     function updateLocalLastPurchase(tokenId: number, purchaseId: number) {
@@ -422,9 +449,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     <CardBuyer
                                         key={buyer.id}
                                         buyer={buyer}
-                                        onDelete={handleDeleteBuyer}
+                                        onDelete={getUpdatedListBuyer}
                                         buyerType={buyerTypes[buyer.address] || null}
                                         handleTypeBuyer={handleBuyerTypeChange}
+                                        hideBuyerBlackList={hideBuyerBlackList}
                                     />
                                 )}
                         </ul>

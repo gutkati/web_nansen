@@ -12,9 +12,11 @@ interface LastPurchase {
 
 export async function getPurchasesAll(): Promise<ListPurchases[]> {
     const [rows] = await connection.query(
-        `SELECT MAX(id) as id, token_id
-         FROM bought_sold
-         GROUP BY token_id`
+        `SELECT MAX(b.id) as id, b.token_id
+         FROM bought_sold b
+                  LEFT JOIN black_list bl ON b.address = bl.address
+         WHERE bl.address IS NULL
+         GROUP BY b.token_id`
     );
 
     return rows as ListPurchases[]
