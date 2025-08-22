@@ -15,6 +15,8 @@ import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 import ModalAdd from "@/app/components/modalWindows/ModalAdd";
 import AddTokenMessage from "@/app/components/message/AddTokenMessage";
+import ButtonBlackList from "@/app/components/buttonBlackList/ButtonBlackList";
+import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
 
 type TokenType = {
     id: number;
@@ -71,6 +73,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [successMessageAddToken, setSuccessMessageAddToken] = useState<boolean>(false);
     const [successMessageDeleteToken, setSuccessMessageDeleteToken] = useState<boolean>(false);
     const [nameAddToken, setNameAddToken] = useState<string>('')
+
+    const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
     const {
@@ -334,9 +338,9 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
 
         if (!latestPurchase) return false; // покупок вообще нет
-         if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
+        if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
         //return latestPurchase.id > (savedPurchase?.purchase_id ?? 0)
-         return latestPurchase.id > savedPurchase.purchase_id
+        return latestPurchase.id > savedPurchase.purchase_id
     }
 
     function updateLocalLastPurchase(tokenId: number, purchaseId: number) {
@@ -364,9 +368,14 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         setIsModalOpenAddToken(true)
     }
 
+    function openModalBlackList() {
+        setIsOpenModalBlackList(true)
+    }
+
     function closeModalToken() {
         setIsModalOpenRemoveToken(false)
         setIsModalOpenAddToken(false)
+        setIsOpenModalBlackList(false)
     }
 
     return (
@@ -375,8 +384,12 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
                 <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
-                    <ButtonAdd
-                        openModal={openModalTokenAdd}/>
+                    <div className={styles.container__button}>
+                        <ButtonAdd
+                            openModal={openModalTokenAdd}/>
+                        <ButtonBlackList openModal={openModalBlackList}/>
+                    </div>
+
                 </div>
 
                 <ul className={styles.token__list}>
@@ -401,7 +414,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                             openModalCloseRemoveToken(token.id, token.name)
                                         }}
                                     >
-
                                     </div>
                                 </li>
                             )
@@ -484,6 +496,15 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             }
 
             {
+               isOpenModalBlackList && (
+                   <ModalForm children={<ModalBlackList
+                       title='Черный список кошельков'
+                       onClose={closeModalToken}
+                   />}/>
+                )
+            }
+
+            {
                 successMessageAddToken && (
                     <AddTokenMessage text={`Токен ${nameAddToken} успешно добавлен!`}/>
                 )
@@ -494,6 +515,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                     <AddTokenMessage text={`Токен ${nameAddToken} успешно удален!`}/>
                 )
             }
+
         </div>
     );
 };

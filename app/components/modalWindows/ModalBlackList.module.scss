@@ -1,0 +1,71 @@
+@import "../../styles/_variables.module";
+
+.container__blacklist {
+  position: relative;
+  min-width: 600px;
+  min-height: 400px;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  & .btn__close {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-image: url("../../images/icons/close.png");
+    background-size: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: .6;
+    transition: all .2s ease;
+
+    &:hover {
+      cursor: pointer;
+      opacity: .8;
+    }
+
+    &:active {
+      opacity: 1;
+    }
+  }
+
+  & .title__blacklist {
+    font-size: 24px;
+    line-height: 28px;
+    margin: 20px 0;
+  }
+
+  .message__blacklist {
+    font-size: 20px;
+    opacity: .6;
+    margin-top: 20px;
+  }
+
+  & .list__blacklist {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: flex-start;
+
+    & .item__blacklist {
+      list-style: none;
+      text-align: left;
+      transition: all .2s ease;
+
+      &:hover {
+        cursor: pointer;
+        color: $lightgreen-color;
+      }
+
+      &:active {
+        color: $lightgreen-hover-color;
+      }
+    }
+  }
+}
+

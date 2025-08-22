@@ -1,0 +1,21 @@
+.buttonBlacklist {
+  width: 20px;
+  height: 20px;
+  background-image: url("../../images/icons/blacklist.png");
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: .4;
+  transition: all .3s ease;
+
+  &:hover {
+    background-image: url("../../images/icons/blacklist-active.png");
+    opacity: .8;
+    cursor: pointer;
+  }
+
+  &:active {
+    background-image: url("../../images/icons/blacklist-active.png");
+    opacity: 1;
+  }
+}

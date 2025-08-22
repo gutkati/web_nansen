@@ -11,6 +11,11 @@
     justify-content: space-between;
     align-items: center;
     width: 95%;
+
+    & .container__button {
+      display: flex;
+      gap: 20px;
+    }
   }
 
   & .token__list {

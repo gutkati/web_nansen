@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import styles from './CardBuyer.module.scss'
 import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
+import ModalDeletePurchaseList from "@/app/components/modalWindows/ModalDeletePurchaseList";
 
 type BuyerProps = {
     buyer: {
@@ -24,7 +25,8 @@ type BuyerProps = {
 const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer, hideBuyerBlackList}) => {
 
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false) // чекбокс
+    const [isModalOpenDelBuyer, setIsModalOpenDelBuyer] = useState<boolean>(false)
+    const [isModalOpenDelBlackList, setIsModalOpenDelBlackList] = useState<boolean>(false)
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
@@ -32,7 +34,7 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
     }
 
     const linkClass = buyerType === 'smart'
-            ? styles.link__smart
+        ? styles.link__smart
         : buyerType === 'spec'
             ? styles.link__spec
             : '';
@@ -83,25 +85,30 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
             }
 
             onDelete()
-            setIsModalOpen(false);
+            setIsModalOpenDelBuyer(false);
         } catch (err) {
             console.error('Сетевая ошибка при удалении:', err);
         }
     };
 
-    function openModalClose() {
-        setIsModalOpen(true)
+    function openModalDelBuyer() {
+        setIsModalOpenDelBuyer(true)
+    }
+
+    function openModalBlackList() {
+        setIsModalOpenDelBlackList(true)
     }
 
     function closeModalClose() {
-        setIsModalOpen(false)
+        setIsModalOpenDelBuyer(false)
+        setIsModalOpenDelBlackList(false)
     }
 
     return (
         <div className={styles.card}>
             <div
                 className={styles.card__close}
-                onClick={openModalClose}
+                onClick={openModalDelBuyer}
             >
 
             </div>
@@ -168,14 +175,14 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
 
             <div
                 className={`${styles.card__info} ${styles.card__wallet}`}
-                onClick={() => hideBuyerBlackList(buyer.address)}
+                onClick={openModalBlackList}
             >
                 <span>Убрать кошельки из списка</span>
             </div>
 
 
             {
-                isModalOpen && (
+                isModalOpenDelBuyer && (
                     <ModalForm children={<ModalRemovePurchase
                         key={buyer.id}
                         id={buyer.id}
@@ -187,8 +194,23 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 )
             }
 
+            {
+                isModalOpenDelBlackList && (
+                    <ModalForm children={<ModalDeletePurchaseList
+                        key={buyer.id}
+                        address={buyer.address}
+                        text='Убрать кошельки из списка?'
+                        onClose={closeModalClose}
+                        onConfirm={hideBuyerBlackList}
+                    />
+                    }/>
+                )
+            }
+
         </div>
     );
 };
 
 export default CardBuyer;
+
+//hideBuyerBlackList(buyer.address)
