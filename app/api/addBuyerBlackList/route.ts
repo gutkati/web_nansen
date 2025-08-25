@@ -4,9 +4,9 @@ import {NextRequest, NextResponse} from "next/server";
 export async function PATCH(req: NextRequest) {
     const conn = await connection.getConnection();
     try {
-        const {address} = await req.json();
+        const {address, address_labels} = await req.json();
 
-        if (!address) {
+        if (!address || !address_labels) {
             return NextResponse.json({error: "Неверные параметры запроса"}, {status: 400});
         }
 
@@ -17,13 +17,14 @@ export async function PATCH(req: NextRequest) {
             CREATE TABLE IF NOT EXISTS black_list (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 address VARCHAR(255) UNIQUE NOT NULL,
+                address_labels VARCHAR(255) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
 
         await conn.query(
-            `INSERT INTO black_list (address) VALUES (?)`,
-            [address]
+            `INSERT INTO black_list (address, address_labels) VALUES (?, ?)`,
+            [address, address_labels]
         );
         await conn.commit();
 

@@ -268,14 +268,13 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         }
     }
 
-    const hideBuyerBlackList = async (address: string) => {
+    const hideBuyerBlackList = async (address: string, address_labels: string) => {
 
         try {
             const res = await fetch("/api/addBuyerBlackList", {
                 method: "PATCH",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    address
+                body: JSON.stringify({address, address_labels
                 })
             });
 

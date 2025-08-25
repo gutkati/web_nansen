@@ -5,7 +5,7 @@ export async function GET() {
   const conn = await connection.getConnection();
   try {
     const [rows] = await conn.query(
-      `SELECT id, address FROM black_list ORDER BY created_at DESC`
+      `SELECT id, address, address_labels, created_at FROM black_list ORDER BY created_at DESC`
     );
     return NextResponse.json(rows);
   } catch (error) {

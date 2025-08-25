@@ -2,13 +2,14 @@ import React from 'react';
 import styles from "@/app/components/modalWindows/ModalRemovePurchase.module.scss";
 
 type ModalDelPurchaseListProps = {
-    address: string
+    address: string;
+    address_labels: string;
     text: string;
     onClose?: () => void;
-    onConfirm: (address: string) => void;
+    onConfirm: (address: string, address_labels: string) => void;
 }
 
-const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, text, onClose, onConfirm}) => {
+const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, address_labels, text, onClose, onConfirm}) => {
     return (
 
             <div className={styles.modalremove}>
@@ -24,7 +25,7 @@ const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, t
                     </button>
                     <button
                         className={`${styles.btns} ${styles.btn__del}`}
-                        onClick={() => onConfirm(address)}
+                        onClick={() => onConfirm(address, address_labels)}
                     >
                         Убрать</button>
                 </div>

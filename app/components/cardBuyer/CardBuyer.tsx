@@ -4,6 +4,7 @@ import styles from './CardBuyer.module.scss'
 import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 import ModalDeletePurchaseList from "@/app/components/modalWindows/ModalDeletePurchaseList";
+import {formatDate} from "@/app/utils/utils";
 
 type BuyerProps = {
     buyer: {
@@ -19,7 +20,7 @@ type BuyerProps = {
     onDelete: () => void;
     buyerType: 'smart' | 'spec' | null;
     handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
-    hideBuyerBlackList: (address: string) => void;
+    hideBuyerBlackList: (address: string, address_labels: string) => void;
 }
 
 const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer, hideBuyerBlackList}) => {
@@ -27,11 +28,6 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
     const [isModalOpenDelBuyer, setIsModalOpenDelBuyer] = useState<boolean>(false)
     const [isModalOpenDelBlackList, setIsModalOpenDelBlackList] = useState<boolean>(false)
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return date.toLocaleDateString('ru-RU')
-    }
 
     const linkClass = buyerType === 'smart'
         ? styles.link__smart
@@ -199,6 +195,7 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                     <ModalForm children={<ModalDeletePurchaseList
                         key={buyer.id}
                         address={buyer.address}
+                        address_labels={buyer.address_labels}
                         text='Убрать кошельки из списка?'
                         onClose={closeModalClose}
                         onConfirm={hideBuyerBlackList}
