@@ -68,7 +68,7 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
                                 <li key={item.id} className={styles.item__blacklist}>
                                     <span>{item.address}</span>
                                     <span>{item.addressLabels}</span>
-                                    <span>Дата удаления: {formatDate(item.createdAt)}</span>
+                                    <span className={styles.item__date}>Дата удаления: {formatDate(item.createdAt)}</span>
                                     <button className={styles.item__btn}>Вернуть в список</button>
                                 </li>
                             ))}
