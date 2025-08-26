@@ -71,6 +71,10 @@
     display: flex;
     justify-content: space-between;
 
+    & .inactive__text {
+      color: rgba(250, 250, 250, .6);
+    }
+
     & .card__text_bold {
       font-weight: 600;
       letter-spacing: 1px;

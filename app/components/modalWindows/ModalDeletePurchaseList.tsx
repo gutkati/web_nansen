@@ -5,11 +5,12 @@ type ModalDelPurchaseListProps = {
     address: string;
     address_labels: string;
     text: string;
+    namebtn: string;
     onClose?: () => void;
     onConfirm: (address: string, address_labels: string) => void;
 }
 
-const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, address_labels, text, onClose, onConfirm}) => {
+const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, address_labels, text, namebtn, onClose, onConfirm}) => {
     return (
 
             <div className={styles.modalremove}>
@@ -27,7 +28,7 @@ const ModalDeletePurchaseList:React.FC<ModalDelPurchaseListProps> = ({address, a
                         className={`${styles.btns} ${styles.btn__del}`}
                         onClick={() => onConfirm(address, address_labels)}
                     >
-                        Убрать</button>
+                        {namebtn}</button>
                 </div>
             </div>
     );

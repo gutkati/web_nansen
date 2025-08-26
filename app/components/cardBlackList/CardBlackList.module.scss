@@ -1,0 +1,52 @@
+@import "../../styles/_variables.module";
+
+.blacklist__container {
+  min-width: 370px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px 0;
+  position: relative;
+
+  & .item__blacklist {
+    list-style: none;
+    text-align: left;
+    transition: all .2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &:hover {
+      color: $lightgreen-color;
+    }
+
+    & .item__date {
+      color: rgba(250, 250, 250, .6);
+      font-size: 14px;
+    }
+
+    & .item__btn {
+      width: 368px;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px;
+      transition: all .2s ease;
+      border: 1px solid $grey-color;
+      background: inherit;
+      color: rgba(250, 250, 250, .6);
+      box-shadow: $box-shadow;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $lightgreen-color;
+        color: #1e232b;
+      }
+
+      &:active {
+        background-color: $lightgreen-hover-color;
+        box-shadow: none;
+      }
+    }
+  }
+}

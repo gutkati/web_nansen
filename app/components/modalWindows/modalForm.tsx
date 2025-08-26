@@ -8,7 +8,7 @@ type ModalFormProps = {
 
 const ModalForm: React.FC<ModalFormProps> = ({children}) => {
     return (
-        <div className={styles.modalremove__phone}>
+        <div className={styles.modalremove__bgr}>
             <div className={styles.modalform}>
                 {children}
             </div>

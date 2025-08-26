@@ -117,17 +117,17 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 <span>{buyer.address_labels}</span>
             </div>
             <div className={`${styles.card__info} ${styles.card__volume}`}>
-                <span>Объем покупки USD</span>
+                <span className={styles.inactive__text}>Объем покупки USD</span>
                 <span className={`${styles.card__text_bold} ${styles.card__price}`}>{buyer.bought_usd_volume}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span>Текущий баланс USD</span>
+                <span className={styles.inactive__text}>Текущий баланс USD</span>
                 <span className={styles.card__text_bold}>{buyer.current_balance}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__date}`}>
-                <span>Дата</span>
+                <span className={styles.inactive__text}>Дата</span>
                 <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>
             </div>
 
@@ -197,13 +197,13 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                         address={buyer.address}
                         address_labels={buyer.address_labels}
                         text='Убрать кошельки из списка?'
+                        namebtn='Убрать'
                         onClose={closeModalClose}
                         onConfirm={hideBuyerBlackList}
                     />
                     }/>
                 )
             }
-
         </div>
     );
 };

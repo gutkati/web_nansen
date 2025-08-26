@@ -17,6 +17,7 @@ import ModalAdd from "@/app/components/modalWindows/ModalAdd";
 import AddTokenMessage from "@/app/components/message/AddTokenMessage";
 import ButtonBlackList from "@/app/components/buttonBlackList/ButtonBlackList";
 import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
+import Tooltip from "@/app/components/tooltip/Tooltip";
 
 type TokenType = {
     id: number;
@@ -384,9 +385,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                 <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
                     <div className={styles.container__button}>
-                        <ButtonAdd
-                            openModal={openModalTokenAdd}/>
-                        <ButtonBlackList openModal={openModalBlackList}/>
+                        <Tooltip children={<ButtonAdd openModal={openModalTokenAdd}/>} text="Добавить токен"/>
+                        <Tooltip children={<ButtonBlackList openModal={openModalBlackList}/>} text="Черный список кошельков"/>
                     </div>
 
                 </div>
