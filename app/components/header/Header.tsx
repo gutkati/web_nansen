@@ -2,7 +2,6 @@
 import styles from './Header.module.scss'
 import Link from "next/link";
 import {useRouter, usePathname} from "next/navigation";
-import {useState, useEffect} from "react";
 
 const Header = () => {
     const router = useRouter()
