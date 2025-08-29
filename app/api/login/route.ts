@@ -13,11 +13,8 @@ export async function POST(req: Request) {
             process.env.JWT_SECRET!,
             {expiresIn: "1h"} // время жизни токена
         )
-        console.log("1", process.env.JWT_SECRET)
-        console.log('token#', token)
         const response = NextResponse.json({success: true})
         //const response = NextResponse.redirect(new URL("/", req.url))
-        console.log("2", process.env.JWT_SECRET)
         response.cookies.set("token", token, {
             httpOnly: true,
             //secure: process.env.NODE_ENV === "production",

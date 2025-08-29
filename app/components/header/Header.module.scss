@@ -2,6 +2,7 @@
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   & .logo {
     width: 60px;
@@ -10,5 +11,22 @@
     background-size: 60px;
     background-position: center;
     background-repeat: no-repeat;
+  }
+
+  & .btn__logout {
+    border: none;
+    background-color: inherit;
+    color: rgba(250, 250, 250, .6);
+    font-size: 20px;
+    transition: all .2s ease;
+
+    &:hover {
+      cursor: pointer;
+      color: rgba(250, 250, 250, .8);
+    }
+
+    &:active {
+      color: rgba(250, 250, 250, 1);
+    }
   }
 }

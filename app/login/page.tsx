@@ -27,7 +27,6 @@ const LoginPage = () => {
 
         if (res.ok && data.success) {
             router.push("/") // куда редиректить после входа
-            //window.location.href = "/"
         } else {
             setError(textError)
         }
