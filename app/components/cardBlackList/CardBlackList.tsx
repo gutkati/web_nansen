@@ -1,3 +1,4 @@
+"use client"
 import React, {useState} from 'react';
 import styles from "./CardBlackList.module.scss";
 import {formatDate} from "@/app/utils/utils";

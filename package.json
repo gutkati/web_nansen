@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.2",
     "next": "15.3.5",
     "react": "^19.0.0",
@@ -16,6 +17,7 @@
     "sass": "^1.89.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

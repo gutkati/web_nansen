@@ -59,6 +59,9 @@ deploy:
       -e DB_PASSWORD="${DB_PASSWORD}" \
       -e DB_HOST="${DB_HOST}" \
       -e DB_NAME="${DB_NAME}" \
+      -e AUTH_USER="${AUTH_USER}" \
+      -e AUTH_PASS="${AUTH_PASS}" \
+      -e JWT_SECRET="${JWT_SECRET}" \
       --restart unless-stopped \
       "$IMAGE_TAG"
   variables:
@@ -68,6 +71,10 @@ deploy:
     DB_NAME: $DB_NAME
     DB_PASSWORD: $DB_PASSWORD
     DB_USER: $DB_USER
+    #Авторизация сайта
+    AUTH_USER: $AUTH_USER
+    AUTH_PASS: $AUTH_PASS
+    JWT_SECRET: $JWT_SECRET
   tags:
     - prod
   # when: manual

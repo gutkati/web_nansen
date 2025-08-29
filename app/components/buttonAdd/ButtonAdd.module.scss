@@ -9,11 +9,11 @@
   transition: all .3s ease;
 
   &:hover {
-    opacity: .6;
+    opacity: .8;
     cursor: pointer;
   }
 
   &:active {
-    opacity: .8;
+    opacity: 1;
   }
 }

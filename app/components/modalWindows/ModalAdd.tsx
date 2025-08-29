@@ -1,4 +1,4 @@
-"usu client"
+"use client"
 import React, {useState} from 'react';
 import stylesRemove from "@/app/components/modalWindows/ModalRemovePurchase.module.scss";
 import styles from './ModalAdd.module.scss'
