@@ -75,7 +75,7 @@ deploy:
         DOCKER_CMD="$DOCKER_CMD -p 3000:3000"
       fi
       
-      ssh "$SSH_TARGET" << EOF
+      ssh "$SSH_TARGET" << 'EOF'
       set -e  # Выход при ошибке
       docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
       docker pull "$IMAGE_TAG"
