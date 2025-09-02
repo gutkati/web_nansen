@@ -59,7 +59,7 @@ deploy:
         -e AUTH_PASS=\"${AUTH_PASS}\" \
         -e JWT_SECRET=\"${JWT_SECRET}\" \
         --restart unless-stopped \
-        \"$IMAGE_TAG\""
+        $IMAGE_TAG"
       
       if [ "$USE_TRAEFIK" = "true" ]; then
         echo "Используем Traefik для продакшена"
