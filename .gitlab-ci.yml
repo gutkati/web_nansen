@@ -58,7 +58,8 @@ deploy:
         -e AUTH_USER=\"${AUTH_USER}\" \
         -e AUTH_PASS=\"${AUTH_PASS}\" \
         -e JWT_SECRET=\"${JWT_SECRET}\" \
-        --restart unless-stopped"
+        --restart unless-stopped \
+        \"$IMAGE_TAG\""
       
       if [ "$USE_TRAEFIK" = "true" ]; then
         echo "Используем Traefik для продакшена"
@@ -80,7 +81,7 @@ deploy:
       # Удаляем ВСЕ неиспользуемые образы
       docker system prune -af --filter "until=24h" 2>/dev/null || true
       # Запускаем контейнер
-      DOCKER_CMD="$DOCKER_CMD \"$IMAGE_TAG\""
+      DOCKER_CMD="$DOCKER_CMD
       eval $DOCKER_CMD
       EOF
 
