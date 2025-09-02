@@ -27,44 +27,27 @@ deploy:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - |
-      if [ "$SERVER_IP" = "94.141.160.222" ]; then
+      if [ "$SERVER_IP" == "94.141.160.222" ]; then
         echo "Деплой на продакшен"
         USER="root"
         SSH_TARGET="$USER@172.17.0.1"
         SSH_KEY="$PROD_SSH_PRIVATE_KEY"
-        USE_TRAEFIK="true"
+        TRAEFIK="true"
         DOMAIN="nansen.cryptostarscream.ru"
       else
         USER="starscream"
         echo "Деплой на тестовый сервер"
         SSH_TARGET="$USER@$SERVER_IP"
         SSH_KEY="$TEST_SSH_PRIVATE_KEY"
-        USE_TRAEFIK="false"
-        DOMAIN="localhost"
+        TRAEFIK="false"
       fi
       echo "$SSH_KEY" > ~/.ssh/id_ed25519
       chmod 600 ~/.ssh/id_ed25519
-      ssh-keyscan -H "${SSH_TARGET#*@}" >> ~/.ssh/known_hosts
+      ssh-keyscan "${SSH_TARGET#*@}" >> ~/.ssh/known_hosts
   script:
     - |
       echo "Начинаем деплой на $SSH_TARGET"
       echo "USE_TRAEFIK: $USE_TRAEFIK"
-      
-      # Подготавливаем команду для выполнения на удаленном сервере
-      REMOTE_SCRIPT=$(cat << 'REMOTE_EOF'
-      set -e  # Выход при ошибке
-      
-      # Логинимся в Docker registry
-      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-      
-      # Pull образа
-      docker pull "$IMAGE_TAG"
-      
-      # Останавливаем и удаляем старый контейнер
-      docker stop web_nansen 2>/dev/null || true
-      docker rm web_nansen 2>/dev/null || true
-      
-      # Формируем команду запуска
       DOCKER_CMD="docker run -d --name web_nansen \
         --network mariadb_nansen_network \
         -e DB_USER=\"${DB_USER}\" \
@@ -75,58 +58,45 @@ deploy:
         -e AUTH_USER=\"${AUTH_USER}\" \
         -e AUTH_PASS=\"${AUTH_PASS}\" \
         -e JWT_SECRET=\"${JWT_SECRET}\" \
-        --restart unless-stopped"
+        --restart unless-stopped \
+        \"$IMAGE_TAG\""
       
       if [ "$USE_TRAEFIK" = "true" ]; then
         echo "Используем Traefik для продакшена"
         DOCKER_CMD="$DOCKER_CMD --network traefik-public \
-          -l traefik.enable=true \
-          -l traefik.http.routers.web_nansen.rule=Host(\`$DOMAIN\`) \
-          -l traefik.http.routers.web_nansen.entrypoints=websecure \
-          -l traefik.http.routers.web_nansen.tls.certresolver=myresolver \
-          -l traefik.http.services.web_nansen.loadbalancer.server.port=3000"
+          -l \"traefik.enable=true\" \
+          -l \"traefik.http.routers.web_nansen.rule=Host(\`$DOMAIN\`)\" \
+          -l \"traefik.http.routers.web_nansen.entrypoints=websecure\" \
+          -l \"traefik.http.routers.web_nansen.tls.certresolver=myresolver\" \
+          -l \"traefik.http.services.web_nansen.loadbalancer.server.port=3000\""
       else
         echo "Используем прямое пробрасывание портов для тестового сервера"
         DOCKER_CMD="$DOCKER_CMD -p 3000:3000"
       fi
-      
-      DOCKER_CMD="$DOCKER_CMD \"$IMAGE_TAG\""
-      
-      # Выполняем команду
-      eval $DOCKER_CMD
-      
-      # Очистка старых образов
+      ssh "$SSH_TARGET" << 'EOF'
+      set -e  # Выход при ошибке
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      docker pull "$IMAGE_TAG"
+      docker stop web_nansen || true && docker rm web_nansen || true
+      # Удаляем ВСЕ неиспользуемые образы
       docker system prune -af --filter "until=24h" 2>/dev/null || true
-      REMOTE_EOF
-      )
-      
-      # Передаем переменные и выполняем скрипт на удаленном сервере
-      ssh "$SSH_TARGET" "
-        export CI_REGISTRY_USER='$CI_REGISTRY_USER'
-        export CI_REGISTRY_PASSWORD='$CI_REGISTRY_PASSWORD'
-        export CI_REGISTRY='$CI_REGISTRY'
-        export IMAGE_TAG='$IMAGE_TAG'
-        export DB_USER='$DB_USER'
-        export DB_PASSWORD='$DB_PASSWORD'
-        export DB_HOST='$DB_HOST'
-        export DB_NAME='$DB_NAME'
-        export AUTH_USER='$AUTH_USER'
-        export AUTH_PASS='$AUTH_PASS'
-        export JWT_SECRET='$JWT_SECRET'
-        export USE_TRAEFIK='$USE_TRAEFIK'
-        export DOMAIN='$DOMAIN'
-        $REMOTE_SCRIPT
-      "
+      # Запускаем контейнер
+      $DOCKER_CMD \"$IMAGE_TAG\""
+      EOF
+
   variables:
+    #SERVER_IP: '94.141.160.222'  #PROD
     SERVER_IP: '92.61.20.162'  #TEST
     DB_HOST: $DB_HOST
     DB_NAME: $DB_NAME
     DB_PASSWORD: $DB_PASSWORD
     DB_USER: $DB_USER
+    #Авторизация сайта
     AUTH_USER: $AUTH_USER
     AUTH_PASS: $AUTH_PASS
     JWT_SECRET: $JWT_SECRET
   tags:
     - prod
+  # when: manual
   only:
     - main
