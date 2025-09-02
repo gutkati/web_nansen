@@ -1,6 +1,5 @@
 "use client"
 import styles from './Header.module.scss'
-import Link from "next/link";
 import {useRouter, usePathname} from "next/navigation";
 
 const Header = () => {
@@ -17,7 +16,7 @@ const Header = () => {
 
     return (
         <header className={styles.header}>
-            <Link href='/' className={styles.logo}></Link>
+            <div className={styles.logo}></div>
             {pathname !== "/login" && (
                 <button className={styles.btn__logout} onClick={handleLogout}>
                     Выйти
