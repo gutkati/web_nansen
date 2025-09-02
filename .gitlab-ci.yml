@@ -73,7 +73,7 @@ deploy:
         echo "Используем прямое пробрасывание портов для тестового сервера"
         DOCKER_CMD="$DOCKER_CMD -p 3000:3000"
       fi
-      ssh "$SSH_TARGET" << 'EOF'
+      ssh "$SSH_TARGET" << EOF
       set -e  # Выход при ошибке
       echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       docker pull "$IMAGE_TAG"
