@@ -8,10 +8,13 @@ export async function POST(req: Request) {
         username === process.env.AUTH_USER &&
         password === process.env.AUTH_PASS
     ) {
+        // 7 дней в секундах
+        const weekSeconds = 60 * 60 * 24 * 7
+
         const token = jwt.sign(
             {user: username},
             process.env.JWT_SECRET!,
-            {expiresIn: "1h"} // время жизни токена
+            {expiresIn: `${weekSeconds}s`} // время жизни токена
         )
         const response = NextResponse.json({success: true})
         //const response = NextResponse.redirect(new URL("/", req.url))
@@ -20,10 +23,9 @@ export async function POST(req: Request) {
             //secure: process.env.NODE_ENV === "production",
             secure: true,
             sameSite: "lax",
-            maxAge: 60 * 60, // 1 час
+            maxAge: weekSeconds, // 1 неделя
             path: "/"
         })
-
         return response
     }
 
