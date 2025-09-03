@@ -67,7 +67,7 @@ deploy:
         echo "Используем Traefik для продакшена"
         DOCKER_CMD="$DOCKER_CMD --network traefik-public \
           -l traefik.enable=true \
-          -l \"traefik.http.routers.web_nansen.rule=Host('$DOMAIN')\" \
+          -l traefik.http.routers.web_nansen.rule=Host(`gitlab.cryptostarscream.ru`) \
           -l traefik.http.routers.web_nansen.entrypoints=websecure \
           -l traefik.http.routers.web_nansen.tls.certresolver=myresolver \
           -l traefik.http.services.web_nansen.loadbalancer.server.port=3000"
@@ -75,7 +75,12 @@ deploy:
         echo "Используем прямое пробрасывание портов для тестового сервера"
         DOCKER_CMD="$DOCKER_CMD -p 3000:3000"
       fi
-
+      
+      # ОТЛАДКА: выводим финальную команду
+      echo "=== ДЕБАГГИНГ: TRAEFIK_OPTS ==="
+      echo "$DOCKER_CMD"
+      echo "================================"
+      
       DOCKER_CMD="$DOCKER_CMD '$IMAGE_TAG'"
 
       # Выполняем на удаленном сервере
