@@ -76,7 +76,7 @@ deploy:
       fi
       
       # ОТЛАДКА: выводим финальную команду
-      echo "=== ДЕБАГГИНГ: TRAEFIK_OPTS ==="
+      echo "=== ДЕБАГГИНГ: DOCKER_CMD ==="
       echo "$DOCKER_CMD"
       echo "================================"
       
@@ -90,7 +90,7 @@ deploy:
       docker stop web_nansen || true
       docker rm web_nansen || true
       docker system prune -af --filter "until=24h" 2>/dev/null || true
-      eval $DOCKER_CMD
+      $DOCKER_CMD
       EOF
 
   variables:
