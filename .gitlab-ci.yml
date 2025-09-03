@@ -94,8 +94,8 @@ deploy:
       EOF
 
   variables:
-    #SERVER_IP: '94.141.160.222'  #PROD
-    SERVER_IP: '92.61.20.162'  #TEST
+    SERVER_IP: '94.141.160.222'  #PROD
+    #SERVER_IP: '92.61.20.162'  #TEST
     DB_HOST: $DB_HOST
     DB_NAME: $DB_NAME
     DB_PASSWORD: $DB_PASSWORD
