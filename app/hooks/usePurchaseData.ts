@@ -68,4 +68,4 @@ export function usePurchaseData() {
     }
 
     return {data, dataFilterMonth, loadingPurchase, errorPurchase, fetchData};
-};
+}
