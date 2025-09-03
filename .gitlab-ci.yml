@@ -52,7 +52,6 @@ deploy:
       # Формируем команду ЛОКАЛЬНО
       DOCKER_CMD="docker run -d --name web_nansen \
         --network mariadb_nansen_network \
-        --network traefik-public \
         -e DB_USER='${DB_USER}' \
         -e DB_AVAILABLE=true \
         -e DB_PASSWORD='${DB_PASSWORD}' \
