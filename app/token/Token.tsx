@@ -92,12 +92,10 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
     useEffect(() => {
         if (dates.length > 0) {
-            console.log('dates', dates)
             groupDatesByMonth(dates)
             setMessageMonth('')
             setActiveMonth(null)
         } else {
-            console.log('dates2', dates)
             setListMonth([])
             setMessageMonth('Покупок не было!')
         }
@@ -322,7 +320,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         // сортировка по убыванию дат (чтобы последний месяц был первым)
         result.sort((a, b) => b.date[0].getTime() - a.date[0].getTime());
 
-        console.log('result', result)
         setListMonth(result)
     }
 

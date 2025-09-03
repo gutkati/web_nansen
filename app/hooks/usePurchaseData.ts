@@ -33,7 +33,7 @@ export function usePurchaseData() {
                 body: JSON.stringify({tokenId})
             })
             const lisData = await res.json()
-            console.log('lisData', lisData)
+
             if (res.ok) {
                 let purchases = lisData as PurchaseData[];
 
@@ -53,7 +53,6 @@ export function usePurchaseData() {
                         );
                     });
                 }
-                console.log('data', data)
                 setDataFilterMonth(purchases)
                 return purchases
             } else {
