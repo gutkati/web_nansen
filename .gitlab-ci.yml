@@ -32,14 +32,14 @@ deploy:
         USER="root"
         SSH_TARGET="$USER@172.17.0.1"
         SSH_KEY="$PROD_SSH_PRIVATE_KEY"
-        TRAEFIK="true"
+        USE_TRAEFIK="true"
         DOMAIN="nansen.cryptostarscream.ru"
       else
         USER="starscream"
         echo "Деплой на тестовый сервер"
         SSH_TARGET="$USER@$SERVER_IP"
         SSH_KEY="$TEST_SSH_PRIVATE_KEY"
-        TRAEFIK="false"
+        USE_TRAEFIK="false"
       fi
       echo "$SSH_KEY" > ~/.ssh/id_ed25519
       chmod 600 ~/.ssh/id_ed25519
