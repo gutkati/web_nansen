@@ -7,9 +7,10 @@ type InputProps = {
     placeholder: string;
     value: string | number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onBlur: () => void
 }
 
-const Input:React.FC<InputProps> = ({type, placeholder, value, onChange}) => {
+const Input:React.FC<InputProps> = ({type, placeholder, value, onChange, onBlur}) => {
     return (
         <input
             className={styles.input__search}
@@ -17,6 +18,7 @@ const Input:React.FC<InputProps> = ({type, placeholder, value, onChange}) => {
             placeholder={placeholder}
             value={value}
             onChange={onChange}
+            onBlur={onBlur}
         />
     );
 };

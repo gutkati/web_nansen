@@ -1,6 +1,5 @@
 "use client"
 import React, {useState} from 'react';
-import stylesRemove from "@/app/components/modalWindows/ModalRemovePurchase.module.scss";
 import styles from './ModalAdd.module.scss'
 
 type Token = {
@@ -72,7 +71,6 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose, onConfirm}) => {
             setErrorPrice('');
         }
     }
-
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -168,7 +166,5 @@ const ModalAdd: React.FC<ModalAddProps> = ({title, onClose, onConfirm}) => {
         </form>
     );
 };
-
-// https://app.nansen.ai/token-god-mode?tokenAddress=0x0001a800a6b18995b03f44bb040a5ffc28e45cb0&chain=ethereum
 
 export default ModalAdd;

@@ -18,10 +18,13 @@ import AddTokenMessage from "@/app/components/message/AddTokenMessage";
 import ButtonBlackList from "@/app/components/buttonBlackList/ButtonBlackList";
 import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
 import Tooltip from "@/app/components/tooltip/Tooltip";
+import ModalUpdate from "@/app/components/modalWindows/ModalUpdate";
 
 type TokenType = {
     id: number;
     name: string;
+    url: string;
+    trade_volume: number;
     added_at: Date | null;
 };
 
@@ -30,6 +33,11 @@ type Token = {
     token_address: string;
     chain: string;
     url: string;
+    trade_volume: number;
+}
+
+type TokenUpdate = {
+    id: number
     trade_volume: number;
 }
 
@@ -57,6 +65,7 @@ type MonthType = {
 const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [activeTokenId, setActiveTokenId] = useState<number | null>(null)
     const [activeTokenName, setActiveTokenName] = useState<string>('')
+    const [activeTokenVolume, setActiveTokenVolume] = useState<number | null>(null)
     const [isShowMonth, setIsShowMonth] = useState(false);
     const [isShowPurchases, setIsPurchases] = useState(false);
     const [listMonth, setListMonth] = useState<MonthType>([])
@@ -76,6 +85,9 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [nameAddToken, setNameAddToken] = useState<string>('')
 
     const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
+
+    const [isOpenModalUpdateToken, setIsOpenModalUpdateToken] = useState<boolean>(false)
+    const [successMessageUpdateToken, setSuccessMessageUpdateToken] = useState<boolean>(false);
 
     const {dates, loading, error, fetchDates} = usePurchaseDates()
     const {
@@ -191,7 +203,30 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             router.refresh(); // обновляем список токенов
             setNameAddToken(newToken.name)
             setSuccessMessageAddToken(true)
-            setTimeout(() => setSuccessMessageAddToken(false), 3000)
+            setTimeout(() => setSuccessMessageAddToken(false), 4000)
+        } catch (err) {
+            console.error('Сетевая ошибка при добавлении токена:', err);
+        }
+    }
+
+    const handleUpdateToken = async (newToken: TokenUpdate) => {
+        try {
+            const res = await fetch('/api/updateToken', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newToken)
+            });
+
+            if (!res.ok) {
+                console.error('Ошибка при добавлении токена');
+                return;
+            }
+            setIsOpenModalUpdateToken(false)
+            router.refresh(); // обновляем список токенов
+            setSuccessMessageUpdateToken(true)
+            setTimeout(() => setSuccessMessageUpdateToken(false), 4000)
         } catch (err) {
             console.error('Сетевая ошибка при добавлении токена:', err);
         }
@@ -217,7 +252,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
             setNameAddToken(activeTokenName)
             setSuccessMessageDeleteToken(true)
-            setTimeout(() => setSuccessMessageDeleteToken(false), 3000)
+            setTimeout(() => setSuccessMessageDeleteToken(false), 4000)
         } catch (err) {
             console.error('Сетевая ошибка при удалении:', err);
         }
@@ -273,7 +308,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             const res = await fetch("/api/addBuyerBlackList", {
                 method: "PATCH",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({address, address_labels
+                body: JSON.stringify({
+                    address, address_labels
                 })
             });
 
@@ -365,6 +401,13 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         setIsModalOpenAddToken(true)
     }
 
+    function openModalTokenUpdate(tokenId: number, tokenName: string, tokenVolume: number) {
+        setActiveTokenId(tokenId)
+        setActiveTokenName(tokenName)
+        setActiveTokenVolume(tokenVolume)
+        setIsOpenModalUpdateToken(true)
+    }
+
     function openModalBlackList() {
         setIsOpenModalBlackList(true)
     }
@@ -373,6 +416,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         setIsModalOpenRemoveToken(false)
         setIsModalOpenAddToken(false)
         setIsOpenModalBlackList(false)
+        setIsOpenModalUpdateToken(false)
     }
 
     return (
@@ -383,7 +427,8 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                     <ButtonBack text='Главная'/>
                     <div className={styles.container__button}>
                         <Tooltip children={<ButtonAdd openModal={openModalTokenAdd}/>} text="Добавить токен"/>
-                        <Tooltip children={<ButtonBlackList openModal={openModalBlackList}/>} text="Черный список кошельков"/>
+                        <Tooltip children={<ButtonBlackList openModal={openModalBlackList}/>}
+                                 text="Черный список кошельков"/>
                     </div>
 
                 </div>
@@ -401,15 +446,32 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                     className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
                                 >
                                     {showNotification && <Notification/>}
-                                    <span>{token.name} {isNew && <span className={styles.newLabel}>(new)</span>}</span>
 
-                                    <div
-                                        className={styles.token__remove}
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            openModalCloseRemoveToken(token.id, token.name)
-                                        }}
-                                    >
+                                    <div className={styles.token__info}>
+                                        <span>{token.name} {isNew &&
+                                            <span className={styles.newLabel}>(new)</span>}</span>
+                                        <span className={styles.token__trade_volume}>{token.trade_volume}</span>
+                                    </div>
+
+
+                                    <div className={styles.token__action}>
+                                        <div
+                                            className={`${styles.token__update} ${styles.token__icons_style}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                openModalTokenUpdate(token.id, token.name, token.trade_volume)
+                                            }}
+                                        >
+
+                                        </div>
+                                        <div
+                                            className={`${styles.token__remove} ${styles.token__icons_style}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                openModalCloseRemoveToken(token.id, token.name)
+                                            }}
+                                        >
+                                        </div>
                                     </div>
                                 </li>
                             )
@@ -492,11 +554,24 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             }
 
             {
-               isOpenModalBlackList && (
-                   <ModalForm children={<ModalBlackList
-                       title='Черный список кошельков'
-                       onClose={closeModalToken}
-                   />}/>
+                isOpenModalUpdateToken && activeTokenId && activeTokenVolume && (
+                    <ModalForm children={<ModalUpdate
+                        title={`Редактировать токен ${activeTokenName}`}
+                        id={activeTokenId}
+                        trade_volume={activeTokenVolume}
+                        onClose={closeModalToken}
+                        onConfirm={handleUpdateToken}
+                    />}/>
+                )
+
+            }
+
+            {
+                isOpenModalBlackList && (
+                    <ModalForm children={<ModalBlackList
+                        title='Черный список кошельков'
+                        onClose={closeModalToken}
+                    />}/>
                 )
             }
 
@@ -509,6 +584,12 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             {
                 successMessageDeleteToken && (
                     <AddTokenMessage text={`Токен ${nameAddToken} успешно удален!`}/>
+                )
+            }
+
+            {
+                successMessageUpdateToken && (
+                    <AddTokenMessage text={`Цена сделки токена ${activeTokenName} успешно изменена!`}/>
                 )
             }
 
