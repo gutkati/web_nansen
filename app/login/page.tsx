@@ -32,6 +32,28 @@ const LoginPage = () => {
         }
     }
 
+    // Валидация логина
+    const validateUsername = (value: string): string => {
+        if (!value.trim()) return 'Логин обязателен';
+        return '';
+    }
+
+    // Валидация пароля
+    const validatePassword = (value: string): string => {
+        if (!value.trim()) return 'Пароль обязателен';
+        return '';
+    }
+
+    // Обработчик blur для логина
+    const handleBlurUsername = () => {
+        setError(validateUsername(username));
+    }
+
+    // Обработчик blur для пароля
+    const handleBlurPassword = () => {
+        setError(validatePassword(password));
+    }
+
     return (
         <div className={styles.login__page}>
             <Header/>
@@ -46,6 +68,7 @@ const LoginPage = () => {
                                 placeholder='Логин'
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
+                                onBlur={handleBlurUsername}
                             />
                         </div>
 
@@ -55,6 +78,7 @@ const LoginPage = () => {
                                 placeholder='Пароль'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                onBlur={handleBlurPassword}
                             />
                             <span className={styles.login__error}>{error}</span>
                         </div>
