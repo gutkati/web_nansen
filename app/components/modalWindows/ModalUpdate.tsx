@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import stylesAdd from "@/app/components/modalWindows/ModalAdd.module.scss";
-import styles from './ModalUpdate.module.scss';
 import Input from "@/app/components/input/Input";
 
 type Token = {
