@@ -159,6 +159,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                 initialTypes[buyer.address] = null;
             }
         });
+
         setBuyerTypes(initialTypes);
     }, [purchasesToken]);
 
