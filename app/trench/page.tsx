@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Токены",
     description: "Список токенов",
-};
+}
 
 export default async function TokenPage() {
         // const tokens = await getTokens();
