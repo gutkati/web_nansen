@@ -1,21 +1,24 @@
 @import "../../styles/_variables.module";
 
 .button {
-  width: 210px;
+  min-width: 210px;
+  padding: 0 30px;
   height: 60px;
-  border-radius: 99px;
+  border-radius: 50px;
   color: $grey-color;
-  font-size: 28px;
+  font-size: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 600;
   transition: all ease .2s;
+  box-shadow: $box-shadow;
 
   &:hover {
     opacity: .9;
   }
   &:active {
     opacity: .8;
+    box-shadow: none;
   }
 }

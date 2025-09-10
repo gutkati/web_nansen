@@ -49,6 +49,7 @@ type ListPurchases = {
 type LastPurchase = {
     token_id: number;
     purchase_id: number;
+    viewed_at: string;
 };
 
 type TokenProps = {
@@ -355,7 +356,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
         // сортировка по убыванию дат (чтобы последний месяц был первым)
         result.sort((a, b) => b.date[0].getTime() - a.date[0].getTime());
-
         setListMonth(result)
     }
 
@@ -366,26 +366,51 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         fetchData(tokenId, date)
     }
 
-    function hasTodayPurchases(tokenId: number) {
+    // function getNotificationStatus(tokenId: number) {
+    //     const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
+    //     const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
+    //
+    //     if (!latestPurchase) return false; // покупок вообще нет
+    //     if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
+    //     return latestPurchase.id > savedPurchase.purchase_id
+    // }
+
+    function getNotificationStatus(tokenId: number) {
         const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
 
-        if (!latestPurchase) return false; // покупок вообще нет
-        if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
-        //return latestPurchase.id > (savedPurchase?.purchase_id ?? 0)
-        return latestPurchase.id > savedPurchase.purchase_id
+        if (!latestPurchase) return null; // покупок вообще нет
+        if (!savedPurchase) return 'green';   // пользователь ещё не открывал этот токен → значит всё новое
+        if (latestPurchase.id > savedPurchase.purchase_id) return 'green'
+
+        const lastViewedDate = new Date(savedPurchase.viewed_at) // тебе нужно сохранять дату просмотра в localLastPurchase
+        //const diffDays = (Date.now() - lastViewedDate.getTime()) / (1000 * 60 * 60 * 24)
+        const diffDays = (Date.now() - lastViewedDate.getTime()) / (1000 * 60 * 60 * 3)
+
+        if (latestPurchase.id === savedPurchase.purchase_id && diffDays <= 2) {
+            return "orange" // до 2 дней держим оранжевый
+        }
+
+        return null
     }
 
     function updateLocalLastPurchase(tokenId: number, purchaseId: number) {
         const updatedLastPurchases = [...localLastPurchase]
         const existing = updatedLastPurchases.find(p => p.token_id === tokenId)
+        const now = new Date().toISOString(); // сохраняем ISO строку времени
 
         if (existing) {
-            existing.purchase_id = purchaseId
-        } else {
-            updatedLastPurchases.push({token_id: tokenId, purchase_id: purchaseId})
-        }
+        // existing.purchase_id = purchaseId
 
+            //!!!!!!!
+            if (purchaseId > existing.purchase_id) {
+                existing.purchase_id = purchaseId
+                existing.viewed_at = now
+            }
+
+        } else {
+            updatedLastPurchases.push({token_id: tokenId, purchase_id: purchaseId, viewed_at: now})
+        }
         setLocalLastPurchase(updatedLastPurchases)
     }
 
@@ -438,14 +463,14 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                         .slice() // создаём копию, чтобы не мутировать исходный массив
                         .sort((a, b) => a.name.localeCompare(b.name)) // сортировка по имени
                         .map(token => {
-                            const showNotification = hasTodayPurchases(token.id)
+                            const notificationStatus = getNotificationStatus(token.id)
                             const isNew = token.added_at ? (new Date().getTime() - new Date(token.added_at).getTime()) < ONE_WEEK_MS : false
                             return (
                                 <li key={token.id}
                                     onClick={() => showListMonth(token.id)}
                                     className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
                                 >
-                                    {showNotification && <Notification/>}
+                                    {notificationStatus && <Notification color={notificationStatus}/>}
 
                                     <div className={styles.token__info}>
                                         <span>{token.name} {isNew &&

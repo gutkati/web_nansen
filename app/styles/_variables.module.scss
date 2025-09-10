@@ -7,6 +7,8 @@ $lilac-color: #CE97FF;
 $error-color: #ff294e;
 $yelloy-color: #FFD16E;
 $message-color: #232a32;
+$notification-orange: #FF9E59;
+$notification-lightgreen: #C9E957;
 
 $gradient-button: linear-gradient(to bottom, #C9E957, #303843);
 $box-shadow: 0 0 9px rgba(0, 0, 0, .5);
@@ -16,4 +18,7 @@ $box-shadow: 0 0 9px rgba(0, 0, 0, .5);
   greyСolor: $grey-color;
   darkgreyСolor: $darkgrey-color;
   lightgreenColor: #C9E957;
+  notificationlightgreen: #C9E957;
+  notificationOrange: #FF9E59;
+  lilac: #CE97FF;
 }

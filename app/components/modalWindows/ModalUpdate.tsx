@@ -47,9 +47,16 @@ const ModalUpdate: React.FC<ModalUpdateProps> = ({title, id, trade_volume, onClo
             return;
         }
 
+        const newVolume = +volumeModal;
+
+        if (newVolume === trade_volume) {
+            onClose?.(); // закрываем модалку
+            return
+        }
+
         const newToken: Token = {
             id: id,
-            trade_volume: +volumeModal
+            trade_volume: newVolume
         };
 
         onConfirm(newToken); // отдаем родителю

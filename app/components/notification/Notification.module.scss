@@ -4,7 +4,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: $lightgreen-color;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,6 +12,14 @@
   left: 0;
   top: 7px;
   z-index: 999;
+
+  &.green {
+    background-color: $notification-lightgreen;
+  }
+
+  &.orange {
+    background-color: $notification-orange;
+  }
 
   @media (max-width: 1440px) {
     top: 5px;

@@ -9,7 +9,8 @@ export default async function App() {
         <div className={styles.app}>
             <Header/>
             <main className={styles.main}>
-                <ButtonLink color={colors.lightgreenColor} text="Токены" link='/token'/>
+                <ButtonLink color={colors.lilac} text="Trench tokens" link='/'/>
+                <ButtonLink color={colors.lightgreenColor} text="Tokens" link='/token'/>
             </main>
         </div>
     );

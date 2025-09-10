@@ -7,7 +7,8 @@ interface ListPurchases {
 
 interface LastPurchase {
     token_id: number;
-    purchase_id: number
+    purchase_id: number;
+    viewed_at: string;
 }
 
 export async function getPurchasesAll(): Promise<ListPurchases[]> {
@@ -24,7 +25,7 @@ export async function getPurchasesAll(): Promise<ListPurchases[]> {
 
 export async function getLastPurchase(): Promise<LastPurchase[]> {
     const [rows] = await connection.query(
-        'SELECT token_id, purchase_id FROM last_purchase',
+        'SELECT token_id, purchase_id, viewed_at FROM last_purchase',
     )
 
     return rows as LastPurchase[]

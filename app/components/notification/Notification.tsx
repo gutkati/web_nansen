@@ -2,9 +2,13 @@
 import React from 'react';
 import styles from './Notification.module.scss'
 
-const Notification = () => {
+type NotificationProps = {
+    color: 'green' | 'orange';
+}
+
+const Notification:React.FC<NotificationProps> = ({color}) => {
     return (
-        <div className={styles.notification}>
+        <div className={`${styles.notification} ${styles[color]}`}>
             <span>!</span>
         </div>
     );
