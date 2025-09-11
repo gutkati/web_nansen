@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# Файлы с информацией/конфигами
+*.info.txt
+
 # testing
 /coverage
 

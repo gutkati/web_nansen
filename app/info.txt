@@ -1,0 +1,240 @@
+// app/components/base/BaseTokenList.tsx
+"use client";
+import React from 'react';
+import styles from './BaseTokenList.module.scss';
+import Notification from "@/app/components/notification/Notification";
+import { TokenType, ListPurchases, LastPurchase } from "@/app/types";
+
+interface BaseTokenListProps {
+  tokens: TokenType[];
+  listPurchases: ListPurchases[];
+  lastPurchase: LastPurchase[];
+  onTokenClick: (tokenId: number) => void;
+  onUpdateToken: (tokenId: number, tokenName: string, tokenVolume: number) => void;
+  onRemoveToken: (tokenId: number, tokenName: string) => void;
+  renderTokenInfo?: (token: TokenType) => React.ReactNode;
+  notificationStrategy?: (tokenId: number) => string | null;
+  ONE_WEEK_MS?: number;
+}
+
+const BaseTokenList: React.FC<BaseTokenListProps> = ({
+  tokens,
+  listPurchases,
+  lastPurchase,
+  onTokenClick,
+  onUpdateToken,
+  onRemoveToken,
+  renderTokenInfo,
+  notificationStrategy,
+  ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
+}) => {
+
+  const defaultNotificationStrategy = (tokenId: number) => {
+    const latestPurchase = listPurchases.find(p => p.token_id === tokenId);
+    const savedPurchase = lastPurchase.find(t => t.token_id === tokenId);
+
+    if (!latestPurchase) return null;
+    if (!savedPurchase) return 'green';
+    if (latestPurchase.id > savedPurchase.purchase_id) return 'green';
+
+    const lastViewedDate = new Date(savedPurchase.viewed_at);
+    const diffDays = (Date.now() - lastViewedDate.getTime()) / (1000 * 60 * 60 * 3);
+
+    if (latestPurchase.id === savedPurchase.purchase_id && diffDays <= 2) {
+      return "orange";
+    }
+
+    return null;
+  };
+
+  const getNotificationStatus = notificationStrategy || defaultNotificationStrategy;
+
+  return (
+    <ul className={styles.token__list}>
+      {tokens
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(token => {
+          const notificationStatus = getNotificationStatus(token.id);
+          const isNew = token.added_at
+            ? (new Date().getTime() - new Date(token.added_at).getTime()) < ONE_WEEK_MS
+            : false;
+
+          return (
+            <li
+              key={token.id}
+              onClick={() => onTokenClick(token.id)}
+              className={styles.token__item}
+            >
+              {notificationStatus && <Notification color={notificationStatus} />}
+
+              <div className={styles.token__info}>
+                {renderTokenInfo ? (
+                  renderTokenInfo(token)
+                ) : (
+                  <>
+                    <span>{token.name} {isNew && <span className={styles.newLabel}>(new)</span>}</span>
+                    <span className={styles.token__trade_volume}>{token.trade_volume}</span>
+                  </>
+                )}
+              </div>
+
+              <div className={styles.token__action}>
+                <div
+                  className={styles.token__update}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUpdateToken(token.id, token.name, token.trade_volume);
+                  }}
+                />
+                <div
+                  className={styles.token__remove}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveToken(token.id, token.name);
+                  }}
+                />
+              </div>
+            </li>
+          );
+        })}
+    </ul>
+  );
+};
+
+export default BaseTokenList;
+2. Создайте специализированные компоненты
+Для обычных токенов:
+
+tsx
+// app/token/Token.tsx
+"use client";
+import React, { useState } from 'react';
+import BaseTokenList from '@/app/components/base/BaseTokenList';
+// ... остальные импорты
+
+const Token: React.FC<TokenProps> = ({ tokens, listPurchases, lastPurchase }) => {
+  // ... ваш существующий код
+
+  return (
+    <div className={styles.token}>
+      <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
+        <div className={styles.token__header}>
+          <ButtonBack text='Главная'/>
+          <div className={styles.container__button}>
+            <Tooltip children={<ButtonAdd openModal={openModalTokenAdd}/>} text="Добавить токен"/>
+            <Tooltip children={<ButtonBlackList openModal={openModalBlackList}/>} text="Черный список кошельков"/>
+          </div>
+        </div>
+
+        <BaseTokenList
+          tokens={tokens}
+          listPurchases={listPurchases}
+          lastPurchase={lastPurchase}
+          onTokenClick={showListMonth}
+          onUpdateToken={openModalTokenUpdate}
+          onRemoveToken={openModalCloseRemoveToken}
+        />
+      </InfoContainer>
+
+      {/* Остальной код остается без изменений */}
+    </div>
+  );
+};
+Для Trench токенов:
+
+tsx
+// app/trench/TrenchToken.tsx
+"use client";
+import React, { useState } from 'react';
+import BaseTokenList from '@/app/components/base/BaseTokenList';
+// ... импорты
+
+const TrenchToken: React.FC<TokenProps> = ({ tokens, listPurchases, lastPurchase }) => {
+  // ... специфичная логика для Trench
+
+  const renderTrenchTokenInfo = (token: TokenType) => (
+    <>
+      <span className={styles.trench__name}>{token.name}</span>
+      <span className={styles.trench__volume}>{token.trade_volume}</span>
+      {/* Дополнительная информация для Trench */}
+      <span className={styles.trench__additional}>Доп. поле</span>
+    </>
+  );
+
+  const trenchNotificationStrategy = (tokenId: number) => {
+    // Кастомная логика уведомлений для Trench
+    return 'orange'; // пример
+  };
+
+  return (
+    <div className={styles.trench}>
+      <InfoContainer background={colors.darkgreyСolor} color={colors.lilac} title='Trench Токены'>
+        <div className={styles.trench__header}>
+          <ButtonBack text='Главная'/>
+          <div className={styles.container__button}>
+            <Tooltip children={<ButtonAdd openModal={openModalTrenchAdd}/>} text="Добавить Trench токен"/>
+          </div>
+        </div>
+
+        <BaseTokenList
+          tokens={tokens}
+          listPurchases={listPurchases}
+          lastPurchase={lastPurchase}
+          onTokenClick={showTrenchListMonth}
+          onUpdateToken={openModalTrenchUpdate}
+          onRemoveToken={openModalCloseRemoveTrench}
+          renderTokenInfo={renderTrenchTokenInfo}
+          notificationStrategy={trenchNotificationStrategy}
+          ONE_WEEK_MS={24 * 60 * 60 * 1000} // 1 день для Trench
+        />
+      </InfoContainer>
+
+      {/* Специфичный для Trench контент */}
+    </div>
+  );
+};
+3. Организация файловой структуры
+text
+app/
+├── components/
+│   ├── base/
+│   │   ├── BaseTokenList.tsx
+│   │   └── BaseTokenList.module.scss
+│   └── card/
+│       ├── CardBuyer.tsx          // Общий для обоих
+│       ├── CardTrenchBuyer.tsx    // Специфичный для Trench
+│       └── CardTokenBuyer.tsx     // Специфичный для Token
+├── token/
+│   ├── page.tsx
+│   ├── Token.tsx
+│   └── Token.module.scss
+├── trench/
+│   ├── page.tsx
+│   ├── TrenchToken.tsx
+│   └── TrenchToken.module.scss
+└── types/
+    └── index.ts                   // Общие типы
+4. Общие типы
+typescript
+// app/types/index.ts
+export type TokenType = {
+  id: number;
+  name: string;
+  url: string;
+  trade_volume: number;
+  added_at: Date | null;
+  // Дополнительные поля для Trench
+  trench_specific_field?: string;
+};
+
+export type ListPurchases = {
+  id: number;
+  token_id: number;
+};
+
+export type LastPurchase = {
+  token_id: number;
+  purchase_id: number;
+  viewed_at: string;
+};
