@@ -19,25 +19,13 @@ import ButtonBlackList from "@/app/components/buttonBlackList/ButtonBlackList";
 import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
 import Tooltip from "@/app/components/tooltip/Tooltip";
 import ModalUpdate from "@/app/components/modalWindows/ModalUpdate";
-
-type TokenType = {
-    id: number;
-    name: string;
-    url: string;
-    trade_volume: number;
-    added_at: Date | null;
-};
+import {TokenType, TokenUpdate, MonthType} from "@/app/types";
 
 type Token = {
     name: string;
     token_address: string;
     chain: string;
     url: string;
-    trade_volume: number;
-}
-
-type TokenUpdate = {
-    id: number
     trade_volume: number;
 }
 
@@ -57,11 +45,6 @@ type TokenProps = {
     listPurchases: ListPurchases[],
     lastPurchase: LastPurchase[]
 }
-
-type MonthType = {
-    name: string;
-    date: Date[];
-}[]
 
 const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [activeTokenId, setActiveTokenId] = useState<number | null>(null)
@@ -413,14 +396,14 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         const lastViewed = new Date(savedPurchase.viewed_at).getTime()
         const now = new Date()
 
-        // Определяем время последнего апдейта (6:00 или 18:00, ближайшее прошедшее)
+        // Определяем время последнего апдейта (6:00 или 17:00, ближайшее прошедшее)
         const lastUpdate = new Date(now)
         if (now.getHours() >= 17) {
             lastUpdate.setHours(17, 0, 0, 0)
-        } else if (now.getHours() >= 17) {
-            lastUpdate.setHours(5, 0, 0, 0)
+        } else if (now.getHours() >= 6) {
+            lastUpdate.setHours(6, 0, 0, 0)
         } else {
-            // ещё до 6 утра → берём прошлые 18:00
+            // ещё до 6 утра → берём прошлые 17:00
             lastUpdate.setDate(lastUpdate.getDate() - 1)
             lastUpdate.setHours(17, 0, 0, 0)
         }
