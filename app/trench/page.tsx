@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     description: "Список токенов",
 };
 
-export default async function TokenPage() {
+export default async function TokenPageTrench() {
          const tokens = await getTokensTrench();
         // const listPurchases = await getPurchasesAll();
         // const lastPurchase = await getLastPurchase();
