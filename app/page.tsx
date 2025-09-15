@@ -9,7 +9,7 @@ export default async function App() {
         <div className={styles.app}>
             <Header/>
             <main className={styles.main}>
-                <ButtonLink color={colors.lilac} text="Trench tokens" link='/trench'/>
+                {/*<ButtonLink color={colors.lilac} text="Trench tokens" link='/trench'/>*/}
                 <ButtonLink color={colors.lightgreenColor} text="Tokens" link='/token'/>
             </main>
         </div>
