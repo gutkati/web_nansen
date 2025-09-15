@@ -375,16 +375,16 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         const lastViewed = new Date(savedPurchase.viewed_at).getTime()
         const now = new Date()
 
-        // Определяем время последнего апдейта (6:00 или 17:00, ближайшее прошедшее)
+        // Определяем время последнего апдейта (6:00 или 18:00, ближайшее прошедшее)
         const lastUpdate = new Date(now)
-        if (now.getHours() >= 14) {
-            lastUpdate.setHours(14, 0, 0, 0)
-        } else if (now.getHours() >= 2) {
-            lastUpdate.setHours(2, 0, 0, 0)
+        if (now.getHours() >= 18) {
+            lastUpdate.setHours(18, 0, 0, 0)
+        } else if (now.getHours() >= 6) {
+            lastUpdate.setHours(6, 0, 0, 0)
         } else {
             // ещё до 6 утра → берём прошлые 17:00
             lastUpdate.setDate(lastUpdate.getDate() - 1)
-            lastUpdate.setHours(14, 0, 0, 0)
+            lastUpdate.setHours(18, 0, 0, 0)
         }
 
         // Если просмотр был позже последнего обновления → показываем оранжевый
