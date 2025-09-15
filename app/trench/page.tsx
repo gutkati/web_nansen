@@ -1,5 +1,5 @@
 import type {Metadata} from "next";
-import {getTokens} from "@/lib/queries/tokenQueries";
+import {getTokensTrench} from "@/lib/queriesTrench/tokenTrenchQueries";
 import {getPurchasesAll} from "@/lib/queries/listAllPurchasesQueries"
 import {getLastPurchase} from "@/lib/queries/listAllPurchasesQueries";
 import Trench from "@/app/trench/Trench";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TokenPage() {
-         const tokens = await getTokens();
+         const tokens = await getTokensTrench();
         // const listPurchases = await getPurchasesAll();
         // const lastPurchase = await getLastPurchase();
 

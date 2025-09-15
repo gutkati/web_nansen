@@ -65,6 +65,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     const [buyerTypes, setBuyerTypes] = useState<Record<string, 'smart' | 'spec' | null>>({});
 
     const [successMessageAddToken, setSuccessMessageAddToken] = useState<boolean>(false);
+    const [errorMessageAddToken, setErrorMessageAddToken] = useState<boolean>(false)
     const [successMessageDeleteToken, setSuccessMessageDeleteToken] = useState<boolean>(false);
     const [nameAddToken, setNameAddToken] = useState<string>('')
 
@@ -184,6 +185,15 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                 },
                 body: JSON.stringify({newToken})
             });
+
+            if (res.status === 409) {
+                // токен уже существует
+                setIsModalOpenAddToken(false);
+               // setNameAddToken(newToken.name);
+                setErrorMessageAddToken(true);
+                setTimeout(() => setErrorMessageAddToken(false), 4000)
+                return;
+            }
 
             if (!res.ok) {
                 console.error('Ошибка при добавлении токена');
@@ -625,6 +635,12 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
             {
                 successMessageAddToken && (
                     <AddTokenMessage text={`Токен ${nameAddToken} успешно добавлен!`}/>
+                )
+            }
+
+            {
+                errorMessageAddToken && (
+                    <AddTokenMessage text={`Токен с таким адресом уже сохранен!`}/>
                 )
             }
 

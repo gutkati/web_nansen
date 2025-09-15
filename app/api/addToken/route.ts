@@ -11,6 +11,21 @@ export async function PATCH(req: NextRequest) {
         }
 
         const {name, token_address, chain, url, trade_volume} = newToken
+
+        // Проверяем, есть ли уже такой токен
+        const [rows] = await conn.query(
+            `SELECT id FROM tokens WHERE token_address = ? LIMIT 1`,
+            [token_address, name]
+        );
+
+        if ((rows as any[]).length > 0) {
+            // Уже есть → 409 Conflict
+            return NextResponse.json(
+                { error: "Токен с таким адресом уже сохранён" },
+                { status: 409 }
+            );
+        }
+
         await conn.beginTransaction()
         await conn.query(
             `INSERT INTO tokens (name, token_address, chain, url, trade_volume, added_at) VALUES (?, ?, ?, ?, ?, NOW())`,

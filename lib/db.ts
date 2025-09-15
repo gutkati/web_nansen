@@ -33,12 +33,12 @@ async function ensureTables() {
       )
     `);
 
-    // await conn.query(`
-    //     ALTER TABLE last_purchase
-    //         ADD COLUMN viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-    //         ON
-    //     UPDATE CURRENT_TIMESTAMP;
-    // `);
+    await conn.query(`
+        ALTER TABLE last_purchase
+            ADD COLUMN viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ON
+        UPDATE CURRENT_TIMESTAMP;
+    `);
 
     await conn.commit();
   } catch (err) {
