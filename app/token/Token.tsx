@@ -87,7 +87,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
     const router = useRouter();
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-    //const ONE_WEEK_MS = 24 * 60 * 60 * 1000;
 
     useEffect(() => {
         setIsClient(true)
@@ -110,7 +109,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
             const latestPurchase = purchasesToken[0]; // самая свежая покупка т.к. сортировка по времени
 
-            //setActiveTokenId(latestPurchase)
             const purchaseDate = new Date(latestPurchase.timestamp); // дата свежей покупки
             const selected = selectedMonth[0]; // первая дата из текущего выбранного месяца
 
@@ -366,35 +364,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         fetchData(tokenId, date)
     }
 
-    // function getNotificationStatus(tokenId: number) {
-    //     const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
-    //     const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
-    //
-    //     if (!latestPurchase) return false; // покупок вообще нет
-    //     if (!savedPurchase) return true;   // пользователь ещё не открывал этот токен → значит всё новое
-    //     return latestPurchase.id > savedPurchase.purchase_id
-    // }
-
-    // function getNotificationStatus(tokenId: number) {
-    //     const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
-    //     const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
-    //
-    //     if (!latestPurchase) return null; // покупок вообще нет
-    //     if (!savedPurchase) return 'green';   // пользователь ещё не открывал этот токен → значит всё новое
-    //     if (latestPurchase.id > savedPurchase.purchase_id) return 'green'
-    //
-    //     const lastViewedDate = new Date(savedPurchase.viewed_at) // тебе нужно сохранять дату просмотра в localLastPurchase
-    //     //const diffDays = (Date.now() - lastViewedDate.getTime()) / (1000 * 60 * 60 * 24)
-    //     const diffDays = (Date.now() - lastViewedDate.getTime()) / (1000 * 60 * 60 * 3)
-    //
-    //     if (latestPurchase.id === savedPurchase.purchase_id && diffDays <= 2) {
-    //         return "orange" // до 2 дней держим оранжевый
-    //     }
-    //
-    //     return null
-    // }
-
-
     function getNotificationStatus(tokenId: number) {
         const latestPurchase = listPurchases.find(p => p.token_id === tokenId)
         const savedPurchase = localLastPurchase.find(t => t.token_id === tokenId)
@@ -432,9 +401,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
         const now = new Date().toISOString(); // сохраняем ISO строку времени
 
         if (existing) {
-            // existing.purchase_id = purchaseId
 
-            //!!!!!!!
             if (purchaseId > existing.purchase_id) {
                 existing.purchase_id = purchaseId
                 existing.viewed_at = now

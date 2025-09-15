@@ -19,7 +19,7 @@ export async function PATCH(req: NextRequest) {
         );
 
         if ((rows as any[]).length > 0) {
-            // Уже есть → 409 Conflict
+
             return NextResponse.json(
                 { error: "Токен с таким адресом уже сохранён" },
                 { status: 409 }
