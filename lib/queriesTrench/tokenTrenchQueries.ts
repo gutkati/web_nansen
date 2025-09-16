@@ -4,7 +4,6 @@ interface TokenTrench {
     id: number;
     name: string;
     url: string;
-    trade_volume: number;
     added_at: Date | null;
 }
 

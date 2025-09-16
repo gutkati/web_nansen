@@ -6,6 +6,13 @@ export type TokenType = {
     added_at: Date | null;
 };
 
+export type TokenTrenchType = {
+    id: number;
+    name: string;
+    url: string;
+    added_at: Date | null;
+};
+
 export type TokenUpdate = {
     id: number
     trade_volume: number;
