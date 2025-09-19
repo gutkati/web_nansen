@@ -518,7 +518,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                                                 showListPurchases(date.name, date.date, activeTokenId);
                                             }
                                         }}
-                                        className={`${styles.month_item} ${activeMonth === date.name ? styles.text__active : ''}`}>
+                                        className={`${styles.month__item} ${activeMonth === date.name ? styles.text__active : ''}`}>
                                         <span>{date.name}</span>
                                     </li>
                                 ))}

@@ -1,0 +1,20 @@
+@import "../styles/_variables.module";
+
+.list__dates {
+  width: calc(100% + 22px - 4px); // ширина с учётом паддингов родителя
+  margin-left: -22px; // сдвиг влево на паддинг
+  margin-right: -4px; // сдвиг вправо на паддинг
+  padding: 10px 4px 10px 0; // дублируем паддинги родителя
+  box-sizing: border-box; // паддинги включены в ширину
+  background-color: $darkgrey-color;
+  border-radius: 10px;
+
+  & .list {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    width: 100%;
+    gap: 5px;
+    overflow-y: auto;
+  }
+}

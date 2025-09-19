@@ -23,6 +23,7 @@
     flex-direction: column;
     text-align: start;
     width: 100%;
+    height: 100%;
     gap: 10px;
     overflow-y: auto;
 
@@ -129,14 +130,63 @@
         }
       }
 
-      &.text__active {
-        color: $lightgreen-color;
+      &.month__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+
+        & .month__container {
+          width: calc(100% + 22px - 4px); // ширина с учётом паддингов родителя
+          margin-left: -22px; // сдвиг влево на паддинг
+          margin-right: -4px; // сдвиг вправо на паддинг
+          padding: 0 4px 0 22px; // дублируем паддинги родителя
+          box-sizing: border-box; // паддинги включены в ширину
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-radius: 20px;
+          transition: all .2s ease;
+
+          &:hover {
+            background-color: $darkgrey-color;
+
+            .btn__arrow {
+              opacity: 0.6;
+            }
+          }
+
+          & .btn__arrow {
+            width: 18px;
+            height: 15px;
+            background-color: inherit;
+            border: none;
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 10px;
+            opacity: 0;
+            transition: all .2s ease;
+
+            &:hover {
+              cursor: pointer;
+              opacity: 1;
+            }
+          }
+
+          & .btn__open {
+            background-image: url("../images/icons/open-arrow.png");
+          }
+
+          & .btn__close {
+            background-image: url("../images/icons/close-arrow.png");
+          }
+        }
       }
 
-      &.month_item {
-        &:hover {
-          background-color: $darkgrey-color;
-        }
+      &.month__item_trench {
+        display: flex;
+        flex-direction: column;
       }
 
       &:hover {
@@ -151,6 +201,24 @@
 
       &:active {
         color: $lightgreen-hover-color;
+      }
+
+      &.date_item {
+        color: $text-color;
+        font-size: 16px;
+
+        &:hover {
+          background-color: inherit;
+          color: $lightgreen-hover-color;;
+        }
+
+        &.text__active {
+        color: $lightgreen-color;
+      }
+      }
+
+      &.text__active {
+        color: $lightgreen-color;
       }
     }
 

@@ -1,18 +1,20 @@
 "use client"
 import React, {useState} from 'react';
-import styles from './CardBuyer.module.scss'
+import styles from '@/app/components/cardBuyer/CardBuyer.module.scss'
 import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 import ModalDeletePurchaseList from "@/app/components/modalWindows/ModalDeletePurchaseList";
 import {formatDate} from "@/app/utils/utils";
 
-type BuyerProps = {
+type BuyerTrenchProps = {
     buyer: {
         id: number;
         address: string;
         address_labels: string;
-        bought_usd_volume: string;
-        current_balance: string;
+        token_amount: string;
+        total_outflow: string;
+        total_inflow: string;
+        value_usd: string;
         timestamp: string;
         show_key: number | null;
         buyer_type: string | null;
@@ -20,11 +22,16 @@ type BuyerProps = {
     onDelete: () => void;
     buyerType: 'smart' | 'spec' | null;
     handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
-    hideBuyerBlackList: (address: string, address_labels: string) => void;
+    // hideBuyerBlackList: (address: string, address_labels: string) => void;
 }
 
-const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleTypeBuyer, hideBuyerBlackList}) => {
-
+const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
+                                                         buyer,
+                                                         onDelete,
+                                                         buyerType,
+                                                         handleTypeBuyer,
+                                                         // hideBuyerBlackList
+                                                     }) => {
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
     const [isModalOpenDelBuyer, setIsModalOpenDelBuyer] = useState<boolean>(false)
     const [isModalOpenDelBlackList, setIsModalOpenDelBlackList] = useState<boolean>(false)
@@ -106,7 +113,7 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 className={styles.card__close}
                 onClick={openModalDelBuyer}
             >
-                
+
             </div>
 
             <div className={`${styles.card__link} ${linkClass}`}>
@@ -118,18 +125,28 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
             </div>
             <div className={`${styles.card__info} ${styles.card__volume}`}>
                 <span className={styles.inactive__text}>Объем покупки USD</span>
-                <span className={`${styles.card__text_bold} ${styles.card__price}`}>{buyer.bought_usd_volume}</span>
+                <span className={`${styles.card__text_bold} ${styles.card__price}`}>{buyer.token_amount}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
                 <span className={styles.inactive__text}>Текущий баланс USD</span>
-                <span className={styles.card__text_bold}>{buyer.current_balance}</span>
+                <span className={styles.card__text_bold}>{buyer.total_outflow}</span>
             </div>
 
-            <div className={`${styles.card__info} ${styles.card__date}`}>
-                <span className={styles.inactive__text}>Дата</span>
-                <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>
+            <div className={`${styles.card__info} ${styles.card__balance}`}>
+                <span className={styles.inactive__text}>Текущий баланс USD</span>
+                <span className={styles.card__text_bold}>{buyer.total_inflow}</span>
             </div>
+
+            <div className={`${styles.card__info} ${styles.card__balance}`}>
+                <span className={styles.inactive__text}>Текущий баланс USD</span>
+                <span className={styles.card__text_bold}>{buyer.value_usd}</span>
+            </div>
+
+            {/*<div className={`${styles.card__info} ${styles.card__date}`}>*/}
+            {/*    <span className={styles.inactive__text}>Дата</span>*/}
+            {/*    <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>*/}
+            {/*</div>*/}
 
             <div className={styles.card__containercheck}>
                 <div className={`${styles.card__viewing}`}>
@@ -190,24 +207,22 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 )
             }
 
-            {
-                isModalOpenDelBlackList && (
-                    <ModalForm children={<ModalDeletePurchaseList
-                        key={buyer.id}
-                        address={buyer.address}
-                        address_labels={buyer.address_labels}
-                        text='Убрать кошельки из списка?'
-                        namebtn='Убрать'
-                        onClose={closeModalClose}
-                        onConfirm={hideBuyerBlackList}
-                    />
-                    }/>
-                )
-            }
+            {/*{*/}
+            {/*    isModalOpenDelBlackList && (*/}
+            {/*        <ModalForm children={<ModalDeletePurchaseList*/}
+            {/*            key={buyer.id}*/}
+            {/*            address={buyer.address}*/}
+            {/*            address_labels={buyer.address_labels}*/}
+            {/*            text='Убрать кошельки из списка?'*/}
+            {/*            namebtn='Убрать'*/}
+            {/*            onClose={closeModalClose}*/}
+            {/*            onConfirm={hideBuyerBlackList}*/}
+            {/*        />*/}
+            {/*        }/>*/}
+            {/*    )*/}
+            {/*}*/}
         </div>
     );
 };
 
-export default CardBuyer;
-
-//hideBuyerBlackList(buyer.address)
+export default CardBuyerTrench;
