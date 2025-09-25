@@ -33,6 +33,17 @@ async function ensureTables() {
       )
     `);
 
+    // создать таблицу black_list на старте приложения
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS black_list_trench (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        address VARCHAR(255) UNIQUE NOT NULL,
+        address_labels VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX (address)
+      )
+    `);
+
     await conn.query(`
         ALTER TABLE last_purchase
             ADD COLUMN viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP

@@ -16,8 +16,7 @@ type BlackListItem = {
     createdAt: string;
 }
 
-const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
-
+const ModalBlackListTrench:React.FC<BlackListProps> = ({onClose, title}) => {
     const [itemsBlackList, setItemsBlackList] = useState<BlackListItem[]>([])
     const [loading, setLoading] = useState(true);
     const [searchValue, setSearchValue] = useState<string>('')
@@ -35,8 +34,8 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
     async function getBlackList(): Promise<BlackListItem[]> {
 
         try {
-            const res = await fetch("/api/getBlacklist");
-            if (!res.ok) throw new Error("Ошибка при запросе black_list");
+            const res = await fetch("/api/getBlacklistTrench");
+            if (!res.ok) throw new Error("Ошибка при запросе black_list_trench");
             const data = await res.json();
             return data.map((row: { id: number; address: string, address_labels: string, created_at: string }) => ({
                 id: row.id,
@@ -45,7 +44,7 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
                 createdAt: row.created_at
             }));
         } catch (err) {
-            console.error("Ошибка при загрузке black_list:", err);
+            console.error("Ошибка при загрузке black_list_trench:", err);
             return [];
         }
     }
@@ -53,7 +52,7 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
     // Подтверждение "Вернуть в список"
     async function handleConfirmReturn(address: string) {
         try {
-            const res = await fetch("/api/deleteCardBlacklist", {
+            const res = await fetch("/api/deleteCardBlacklistTrench", {
                 method: "DELETE",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({address})
@@ -69,12 +68,13 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
         }
     }
 
-    const filteredList =
+    const filteredListTrench =
 
         itemsBlackList.filter(item =>
             item.address.toLowerCase().includes(searchValue.toLowerCase()) ||
             item.addressLabels.toLowerCase().includes(searchValue.toLowerCase())
         )
+
 
     return (
         <div className={styles.container__blacklist}>
@@ -96,11 +96,11 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
                 <Loader/>
             ) : itemsBlackList.length === 0 ? (
                 <p className={styles.message__blacklist}>Здесь пока пусто!</p>
-            ) : filteredList.length === 0 ? (
+            ) : filteredListTrench.length === 0 ? (
                 <p className={styles.message__blacklist}>Ничего не найдено!</p>
             ) : (
                 <div className={styles.list__blacklist}>
-                    {filteredList.map((item) => (
+                    {filteredListTrench.map((item) => (
                         <CardBlackList
                             key={item.id}
                             item={item}
@@ -114,4 +114,4 @@ const ModalBlackList: React.FC<BlackListProps> = ({title, onClose}) => {
     );
 };
 
-export default ModalBlackList;
+export default ModalBlackListTrench;

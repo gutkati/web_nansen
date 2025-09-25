@@ -15,22 +15,152 @@
     font-size: 14px;
   }
 
-  & .card__close {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-image: url("../../images/icons/close.png");
-    background-size: 14px;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: .6;
-    transition: all .2s ease;
+& .card__close {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-image: url("../../images/icons/close.png");
+  background-size: 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: .6;
+  transition: all .2s ease;
+
+  &:hover {
+    cursor: pointer;
+    opacity: .8;
+  }
+
+  &:active {
+    opacity: 1;
+  }
+}
+
+& .card__link {
+
+  & a {
+    text-decoration: none;
+    color: $text-color;
+    transition: all ease .2s;
+    display: inline-block; // или block, если нужно
+    max-width: 95%; // чтобы наследовалось ограничение
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     &:hover {
+      text-decoration: underline;
+    }
+
+  }
+}
+
+& .link__smart a {
+  color: $lilac-color;
+}
+
+& .link__spec a {
+  color: $yelloy-color;
+}
+
+
+& .card__volume {
+  & .card__price {
+    color: $lightgreen-color;
+  }
+}
+
+& .card__info {
+  display: flex;
+  justify-content: space-between;
+
+  & .inactive__text {
+    color: rgba(250, 250, 250, .6);
+  }
+
+  & .card__text_bold {
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+}
+
+& .card__containercheck {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  & .card__viewing {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+
+    & .label__smart {
+      color: $lilac-color;
+    }
+
+    & .label__spec {
+      color: $yelloy-color;
+    }
+
+    & input[type='checkbox'],
+    & input[type='radio'] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background-color: #4a536a;
+      border-radius: 3px;
+      outline: none;
       cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+
+      &:hover {
+        opacity: .9;
+      }
+
+      &:checked {
+        background-color: $lightgreen-hover-color;
+        border-color: $lightgreen-hover-color;
+      }
+
+      &.inp__smart:checked {
+        background-color: $lilac-color;
+        border-color: $lilac-color;
+      }
+
+      &.inp__spec:checked {
+        background-color: $yelloy-color;
+        border-color: $yelloy-color;
+      }
+
+      &:checked::after {
+        content: "✓";
+        color: white;
+        font-weight: bold;
+        position: absolute;
+        left: 2px;
+        top: -2px;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+& .card__wallet {
+  margin-top: 8px;
+
+  & span {
+    font-size: 14px;
+    color: $text-color;
+    opacity: .5;
+    transition: all ease .2s;
+
+    &:hover {
       opacity: .8;
+      cursor: pointer;
     }
 
     &:active {
@@ -38,130 +168,6 @@
     }
   }
 
-  & .card__link {
+}
 
-    & a {
-      text-decoration: none;
-      color: $text-color;
-      transition: all ease .2s;
-
-      &:hover {
-        text-decoration: underline;
-      }
-
-    }
-  }
-
-  & .link__smart a {
-    color: $lilac-color;
-  }
-
-  & .link__spec a {
-    color: $yelloy-color;
-  }
-
-
-  & .card__volume {
-    & .card__price {
-      color: $lightgreen-color;
-    }
-  }
-
-  & .card__info {
-    display: flex;
-    justify-content: space-between;
-
-    & .inactive__text {
-      color: rgba(250, 250, 250, .6);
-    }
-
-    & .card__text_bold {
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-  }
-
-  & .card__containercheck {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-
-    & .card__viewing {
-      display: flex;
-      justify-content: flex-start;
-      gap: 20px;
-
-      & .label__smart {
-        color: $lilac-color;
-      }
-
-      & .label__spec {
-        color: $yelloy-color;
-      }
-
-      & input[type='checkbox'],
-      & input[type='radio'] {
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        background-color: #4a536a;
-        border-radius: 3px;
-        outline: none;
-        cursor: pointer;
-        vertical-align: middle;
-        position: relative;
-
-        &:hover {
-          opacity: .9;
-        }
-
-        &:checked {
-          background-color: $lightgreen-hover-color;
-          border-color: $lightgreen-hover-color;
-        }
-
-        &.inp__smart:checked {
-          background-color: $lilac-color;
-          border-color: $lilac-color;
-        }
-
-        &.inp__spec:checked {
-          background-color: $yelloy-color;
-          border-color: $yelloy-color;
-        }
-
-        &:checked::after {
-          content: "✓";
-          color: white;
-          font-weight: bold;
-          position: absolute;
-          left: 2px;
-          top: -2px;
-          font-size: 14px;
-          text-align: center;
-        }
-      }
-    }
-  }
-
-  & .card__wallet {
-    margin-top: 8px;
-
-    & span {
-      font-size: 14px;
-      color: $text-color;
-      opacity: .5;
-      transition: all ease .2s;
-
-      &:hover {
-        opacity: .8;
-        cursor: pointer;
-      }
-
-      &:active {
-        opacity: 1;
-      }
-    }
-
-  }
 }

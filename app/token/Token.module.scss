@@ -10,7 +10,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 94%;
+    width: 93%;
+
+     //@media (max-width: 1440px) {
+     //  width: 94%;
+     //}
 
     & .container__button {
       display: flex;
@@ -20,6 +24,7 @@
 
   & .token__list {
     display: flex;
+    flex: 1;
     flex-direction: column;
     text-align: start;
     width: 100%;
@@ -59,7 +64,7 @@
       position: relative;
 
       @media (max-width: 1440px) {
-        width: 98%;
+        //width: 97%;
         line-height: 26px;
         font-size: 18px;
       }

@@ -446,7 +446,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
     return (
         <div className={styles.token}>
 
-            <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены'>
+            <InfoContainer background={colors.darkgreyСolor} color={colors.lightgreenColor} title='Токены' variant="narrow">
                 <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
                     <div className={styles.container__button}>
@@ -505,7 +505,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
             {
                 isShowMonth ?
-                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Месяцы'>
+                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Месяцы' variant="narrow">
 
                         {loading ? (
                             <Loader/>
@@ -533,7 +533,7 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
 
             {
                 isShowPurchases ?
-                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Покупатели'>
+                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Покупатели' variant="wide">
                         <ul className={styles.token__list}>
                             {loadingPurchase ? (
                                 <Loader/>
@@ -587,7 +587,6 @@ const Token: React.FC<TokenProps> = ({tokens, listPurchases, lastPurchase}) => {
                         onConfirm={handleUpdateToken}
                     />}/>
                 )
-
             }
 
             {

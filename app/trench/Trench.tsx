@@ -22,6 +22,9 @@ import {useTrenchDates} from "@/app/hooks/useTrenchDates";
 import {usePurchaseTrenchData} from "@/app/hooks/usePurchaseTrenchData";
 import {groupDatesByMonth} from "@/app/utils/utils"
 import CardBuyerTrench from "@/app/components/cardBuyerTrench/CardBuyerTrench";
+import {normalizeDate} from "@/app/utils/utils"
+import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
+import ModalBlackListTrench from "@/app/components/modalWindows/ModalBlackListTrench";
 
 type TokenTrench = {
     name: string;
@@ -32,6 +35,11 @@ type TokenTrench = {
 
 type TrenchProps = {
     tokens: TokenTrenchType[];
+}
+
+type DateItem = {
+    raw: string;   // например "2025-09-17"
+    display: string; // "17 сентября"
 }
 
 const Trench: React.FC<TrenchProps> = ({tokens}) => {
@@ -49,13 +57,13 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
     const [openedMonth, setOpenedMonth] = useState<string | null>(null);
     const [selectedMonth, setSelectedMonth] = useState<Date[] | []>([]);
 
-    const [listDates, setListDates] = useState<string[]>([])
+    const [listDates, setListDates] = useState<DateItem[]>([])
     const [isVisibleListDate, setIsVisibleListDate] = useState<boolean>(false)
     const [activeDate, setActiveDate] = useState<string | null>(null)
     const [isShowDate, setIsShowDate] = useState<boolean>(false)
     const [messageDate, setMessageDate] = useState<string>('')
     const [buyerTypesTrench, setBuyerTypesTrench] = useState<Record<string, 'smart' | 'spec' | null>>({});
-
+    const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
 
     const [isShowPurchasesTrench, setIsShowPurchasesTrench] = useState<boolean>(false)
 
@@ -187,7 +195,30 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
         }
     };
 
-    async function getUpdatedListBuyer() {
+    const hideBuyerTrenchBlackList = async (address: string, address_labels: string) => {
+
+        try {
+            const res = await fetch("/api/addBuyerTrenchBlackList", {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    address, address_labels
+                })
+            });
+
+            if (!res.ok) {
+                console.error("Ошибка при добавлении кошелька в черный список:");
+            }
+            // Обновляем список покупок после внесения в черный список
+            getUpdatedListBuyerTrench()
+
+        } catch (err) {
+            console.error("Сетевая ошибка:", err);
+        }
+    }
+
+
+    async function getUpdatedListBuyerTrench() {
         if (activeTokenId !== null) {
 
             const updatedPurchases = await fetchData(activeTokenId);
@@ -208,36 +239,21 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
     function groupDatesList(dates: Date[]) {
         if (!dates || dates.length === 0) return
 
-        // Преобразуем строки в Date
         const result = dates
-            .map(dateStr => new Date(dateStr))
-            .sort((a, b) => b.getTime() - a.getTime()); // свежие сверху
-
-        // Форматируем в "17 сентября 2025"
-        const formatted = result.map(date =>
-            date.toLocaleDateString("ru-RU", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
+            .map(date => {
+                const raw = normalizeDate(date); // YYYY-MM-DD
+                return {
+                    raw,
+                    display: new Date(date).toLocaleDateString("ru-RU", {
+                        day: "numeric",
+                        month: "long"
+                    })
+                };
             })
-        );
-// убираем дубликаты
-        const unique = Array.from(new Set(formatted));
+            .sort((a, b) => b.raw.localeCompare(a.raw));
+
+        const unique = Array.from(new Map(result.map(item => [item.raw, item])).values());
         setListDates(unique);
-        console.log('list', listDates)
-    }
-
-    async function getUpdatedListBuyerTrench() {
-        if (activeTokenId !== null) {
-
-            const updatedPurchases = await fetchData(activeTokenId);
-            const updatedDates = updatedPurchases.map(p => p.timestamp);
-
-            // groupDatesByMonth(updatedDates);
-
-            fetchData(activeTokenId)
-            router.refresh(); // перезагрузить страницу после удаления покупки
-        }
     }
 
     function showListMonthTrench(tokenId: number) {
@@ -275,23 +291,15 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
 
     }
 
-    function showListPurchasesTrench(monthDates: Date[], dateStr: string, tokenId: number) {
-        setIsShowPurchasesTrench(true)
-        setActiveDate(dateStr)
+    function showListPurchasesTrench(monthDates: Date[], rawDate: string, tokenId: number) {
+        setIsShowPurchasesTrench(true);
+        setActiveDate(rawDate);
 
-        // находим выбранную дату как Date
-        const selected = monthDates.find(d =>
-            d.toLocaleDateString("ru-RU", {
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }) === dateStr
-        );
+        const selected = monthDates.find(d => normalizeDate(d) === rawDate);
 
         if (selected) {
-            setActiveDate(dateStr)
-            setSelectedMonth([selected])   // сохраняем массив с одной датой
-            fetchData(tokenId, [selected]) // передаём в хук
+            setSelectedMonth([selected]);
+            fetchData(tokenId, [selected]);
         }
     }
 
@@ -307,22 +315,26 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
         setIsModalOpenAddToken(true)
     }
 
+    function openModalBlackListTrench() {
+        setIsOpenModalBlackList(true)
+    }
+
     function closeModalTokenTrench() {
         setIsModalOpenAddToken(false)
         setIsModalOpenRemoveToken(false)
-
+        setIsOpenModalBlackList(false)
     }
 
     return (
         <div className={styles.token}>
 
-            <InfoContainer background={colors.darkgreyСolor} color={colors.lilacTitle} title="Токены">
+            <InfoContainer background={colors.darkgreyСolor} color={colors.lilacTitle} title="Токены" variant="narrow">
                 <div className={styles.token__header}>
                     <ButtonBack text='Главная'/>
                     <div className={styles.container__button}>
                         <Tooltip children={<ButtonAdd openModal={openModalTokenTrenchAdd}/>} text="Добавить токен"/>
-                        {/*<Tooltip children={<ButtonBlackList openModal={openModalBlackList}/>}*/}
-                        {/*         text="Черный список кошельков"/>*/}
+                        <Tooltip children={<ButtonBlackList openModal={openModalBlackListTrench}/>}
+                                 text="Черный список кошельков"/>
                     </div>
                 </div>
 
@@ -365,7 +377,7 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
 
             {
                 isShowMonth ?
-                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Даты'>
+                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Даты' variant="narrow">
 
                         {loading ? (
                             <Loader/>
@@ -399,15 +411,15 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
                                                         <Loader/>
                                                     ) : listDates.length > 0 ? (
                                                         <ul className={`${stylesTrench.list} ${styles.monthFadeIn}`}>
-                                                            {listDates.map((date, i) => (
+                                                            {listDates.map((dateObj, i) => (
                                                                 <li key={i}
                                                                     onClick={() => {
                                                                         if (activeTokenId !== null) {
-                                                                            showListPurchasesTrench(month.date, date, activeTokenId);
+                                                                            showListPurchasesTrench(month.date, dateObj.raw, activeTokenId);
                                                                         }
                                                                     }}
-                                                                    className={`${styles.date_item} ${activeDate === date ? styles.text__active : ''}`}>
-                                                                    <span>{date}</span>
+                                                                    className={`${styles.date_item} ${activeDate === dateObj.raw ? styles.text__active : ''}`}>
+                                                                    <span>{dateObj.display}</span>
                                                                 </li>
                                                             ))}
                                                         </ul>
@@ -431,7 +443,8 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
 
             {
                 isShowPurchasesTrench ?
-                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Покупатели'>
+                    <InfoContainer background={colors.greyСolor} color={colors.textColor} title='Покупатели'
+                                   variant="wide">
                         <ul className={styles.token__list}>
                             {loadingPurchase ? (
                                 <Loader/>
@@ -444,14 +457,13 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
                                         onDelete={getUpdatedListBuyerTrench}
                                         buyerType={buyerTypesTrench[buyerTrench.address] || null}
                                         handleTypeBuyer={handleBuyerTypeChange}
-                                        // hideBuyerBlackList={hideBuyerBlackList}
+                                        hideBuyerBlackList={hideBuyerTrenchBlackList}
                                     />
                                 )}
                         </ul>
                     </InfoContainer>
                     : ''
             }
-
 
             {
                 isModalOpenAddToken && (
@@ -472,6 +484,15 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
                         onConfirm={handleDeleteTokenTrench}
                     />
                     }/>
+                )
+            }
+
+            {
+                isOpenModalBlackList && (
+                    <ModalForm children={<ModalBlackListTrench
+                        title='Черный список кошельков'
+                        onClose={closeModalTokenTrench}
+                    />}/>
                 )
             }
 

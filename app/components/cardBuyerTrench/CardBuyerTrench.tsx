@@ -22,7 +22,7 @@ type BuyerTrenchProps = {
     onDelete: () => void;
     buyerType: 'smart' | 'spec' | null;
     handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
-    // hideBuyerBlackList: (address: string, address_labels: string) => void;
+    hideBuyerBlackList: (address: string, address_labels: string) => void;
 }
 
 const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
@@ -30,7 +30,7 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                                                          onDelete,
                                                          buyerType,
                                                          handleTypeBuyer,
-                                                         // hideBuyerBlackList
+                                                         hideBuyerBlackList
                                                      }) => {
     const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
     const [isModalOpenDelBuyer, setIsModalOpenDelBuyer] = useState<boolean>(false)
@@ -47,7 +47,7 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
         setShowKey(newValue);
 
         try {
-            const res = await fetch("/api/updateShowKey", {
+            const res = await fetch("/api/updateShowKeyTrench", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -74,7 +74,7 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
 
     const handleDeleteBuyer = async (id: number) => {
         try {
-            const res = await fetch('/api/deletePurchase', {
+            const res = await fetch('/api/deletePurchaseTrench', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -124,17 +124,17 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                 <span>{buyer.address_labels}</span>
             </div>
             <div className={`${styles.card__info} ${styles.card__volume}`}>
-                <span className={styles.inactive__text}>Объем покупки USD</span>
-                <span className={`${styles.card__text_bold} ${styles.card__price}`}>{buyer.token_amount}</span>
+                <span className={styles.inactive__text}>Количество токенов</span>
+                <span className={`${styles.card__text_bold}`}>{buyer.token_amount}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span className={styles.inactive__text}>Текущий баланс USD</span>
+                <span className={styles.inactive__text}>Отправлено токенов</span>
                 <span className={styles.card__text_bold}>{buyer.total_outflow}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span className={styles.inactive__text}>Текущий баланс USD</span>
+                <span className={styles.inactive__text}>Получено токенов</span>
                 <span className={styles.card__text_bold}>{buyer.total_inflow}</span>
             </div>
 
@@ -207,20 +207,20 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                 )
             }
 
-            {/*{*/}
-            {/*    isModalOpenDelBlackList && (*/}
-            {/*        <ModalForm children={<ModalDeletePurchaseList*/}
-            {/*            key={buyer.id}*/}
-            {/*            address={buyer.address}*/}
-            {/*            address_labels={buyer.address_labels}*/}
-            {/*            text='Убрать кошельки из списка?'*/}
-            {/*            namebtn='Убрать'*/}
-            {/*            onClose={closeModalClose}*/}
-            {/*            onConfirm={hideBuyerBlackList}*/}
-            {/*        />*/}
-            {/*        }/>*/}
-            {/*    )*/}
-            {/*}*/}
+            {
+                isModalOpenDelBlackList && (
+                    <ModalForm children={<ModalDeletePurchaseList
+                        key={buyer.id}
+                        address={buyer.address}
+                        address_labels={buyer.address_labels}
+                        text='Убрать кошельки из списка?'
+                        namebtn='Убрать'
+                        onClose={closeModalClose}
+                        onConfirm={hideBuyerBlackList}
+                    />
+                    }/>
+                )
+            }
         </div>
     );
 };

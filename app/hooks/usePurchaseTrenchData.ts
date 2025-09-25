@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {normalizeDate} from "@/app/utils/utils"
 
 interface PurchaseData {
     id: number;
@@ -36,29 +37,18 @@ export function usePurchaseTrenchData() {
             })
             const listData = await res.json()
 
-
             if (res.ok) {
                 let purchases = listData as PurchaseData[];
 
                 setData(purchases.reverse())
 
-                console.log("filterDates:", filterDates);
-                console.log("before filter:", purchases.map(p => p.timestamp));
-
                 //Фильтрация по датам, если переданы
                 if (filterDates && filterDates.length > 0) {
-                    const baseDate = new Date(filterDates[0]);
-                    const targetYear = baseDate.getFullYear();
-                    const targetMonth = baseDate.getMonth();
-                    const targetDay = baseDate.getDate();
+                    const targetRaw = normalizeDate(filterDates[0]);
 
                     purchases = purchases.filter(purchase => {
-                        const purchaseDate = new Date(purchase.timestamp);
-                        return (
-                            purchaseDate.getFullYear() === targetYear &&
-                            purchaseDate.getMonth() === targetMonth &&
-                            purchaseDate.getDate() === targetDay
-                        );
+                        const purchaseRaw = normalizeDate(purchase.timestamp);
+                        return purchaseRaw === targetRaw;
                     });
                 }
                 setDataFilterMonth(purchases)
