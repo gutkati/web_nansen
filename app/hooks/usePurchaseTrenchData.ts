@@ -8,7 +8,8 @@ interface PurchaseData {
     address_labels: string;
     token_amount: string;
     total_outflow: string; // DECIMAL(18,2) представлен как string
-    total_inflow: string;   // DECIMAL(18,2) представлен как string
+    total_inflow: string; // DECIMAL(18,2) представлен как string
+    label_type: string;
     value_usd: string;
     timestamp: string;
     show_key: number | null;

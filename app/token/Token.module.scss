@@ -12,9 +12,9 @@
     align-items: center;
     width: 93%;
 
-     //@media (max-width: 1440px) {
-     //  width: 94%;
-     //}
+    //@media (max-width: 1440px) {
+    //  width: 94%;
+    //}
 
     & .container__button {
       display: flex;
@@ -96,6 +96,11 @@
             color: rgba(250, 250, 250, .5);
             opacity: 0;
             transition: all .2s ease;
+          }
+
+          & .token__last_date {
+            color: rgba(250, 250, 250, .6);
+            font-size: 16px;
           }
         }
 
@@ -218,8 +223,8 @@
         }
 
         &.text__active {
-        color: $lightgreen-color;
-      }
+          color: $lightgreen-color;
+        }
       }
 
       &.text__active {

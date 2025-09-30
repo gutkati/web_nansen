@@ -22,7 +22,7 @@ export async function getPurchaseTrenchByTokenId(tokenId: number): Promise<Purch
 
     const [rows] = await connection.query(
         `SELECT b.id, b.token_id, b.address, b.address_labels, b.token_amount,
-                b.total_outflow, b.total_inflow, b.value_usd, b.show_key, b.buyer_type, b.timestamp
+                b.total_outflow, b.total_inflow, b.label_type, b.value_usd, b.show_key, b.buyer_type, b.timestamp
          FROM tgm_holders b
          LEFT JOIN black_list_trench bl ON b.address = bl.address
          WHERE b.token_id = ? AND bl.address IS NULL`,

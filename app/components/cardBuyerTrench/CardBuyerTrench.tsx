@@ -14,6 +14,7 @@ type BuyerTrenchProps = {
         token_amount: string;
         total_outflow: string;
         total_inflow: string;
+        label_type: string;
         value_usd: string;
         timestamp: string;
         show_key: number | null;
@@ -121,25 +122,26 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                    target='_blank'>{buyer.address}</a>
             </div>
             <div className={styles.card__name}>
-                <span>{buyer.address_labels}</span>
+                <p>{buyer.address_labels} <span className={styles.label__type}>{buyer.label_type}</span></p>
+
             </div>
             <div className={`${styles.card__info} ${styles.card__volume}`}>
-                <span className={styles.inactive__text}>Количество токенов</span>
+                <span className={styles.inactive__text_trench}>Количество токенов</span>
                 <span className={`${styles.card__text_bold}`}>{buyer.token_amount}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span className={styles.inactive__text}>Отправлено токенов</span>
+                <span className={styles.inactive__text_trench}>Отправлено токенов</span>
                 <span className={styles.card__text_bold}>{buyer.total_outflow}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span className={styles.inactive__text}>Получено токенов</span>
+                <span className={styles.inactive__text_trench}>Получено токенов</span>
                 <span className={styles.card__text_bold}>{buyer.total_inflow}</span>
             </div>
 
             <div className={`${styles.card__info} ${styles.card__balance}`}>
-                <span className={styles.inactive__text}>Текущий баланс USD</span>
+                <span className={styles.inactive__text_trench}>Текущий баланс USD</span>
                 <span className={styles.card__text_bold}>{buyer.value_usd}</span>
             </div>
 
@@ -148,43 +150,43 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
             {/*    <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>*/}
             {/*</div>*/}
 
-            <div className={styles.card__containercheck}>
-                <div className={`${styles.card__viewing}`}>
-                    <label htmlFor={`viewing-${buyer.address}`}>Просмотр</label>
-                    <input
-                        type="checkbox"
-                        id={`viewing-${buyer.address}`}
-                        checked={showKey}
-                        onChange={handleCheckboxChange}
-                    />
-                </div>
+            {/*<div className={styles.card__containercheck}>*/}
+            {/*    <div className={`${styles.card__viewing}`}>*/}
+            {/*        <label htmlFor={`viewing-${buyer.address}`}>Просмотр</label>*/}
+            {/*        <input*/}
+            {/*            type="checkbox"*/}
+            {/*            id={`viewing-${buyer.address}`}*/}
+            {/*            checked={showKey}*/}
+            {/*            onChange={handleCheckboxChange}*/}
+            {/*        />*/}
+            {/*    </div>*/}
 
-                <div className={`${styles.card__viewing}`}>
-                    <label htmlFor={`smart-${buyer.address}`} className={styles.label__smart}>Смарт</label>
-                    <input
-                        className={styles.inp__smart}
-                        type="checkbox"
-                        name={`type-${buyer.address}`} // одинаковое name для группы
-                        id={`smart-${buyer.address}`}
-                        value='smart'
-                        checked={buyerType === 'smart'}
-                        onChange={() => handleTypeBuyer(buyer.address, 'smart')}
-                    />
-                </div>
+            {/*    <div className={`${styles.card__viewing}`}>*/}
+            {/*        <label htmlFor={`smart-${buyer.address}`} className={styles.label__smart}>Смарт</label>*/}
+            {/*        <input*/}
+            {/*            className={styles.inp__smart}*/}
+            {/*            type="checkbox"*/}
+            {/*            name={`type-${buyer.address}`} // одинаковое name для группы*/}
+            {/*            id={`smart-${buyer.address}`}*/}
+            {/*            value='smart'*/}
+            {/*            checked={buyerType === 'smart'}*/}
+            {/*            onChange={() => handleTypeBuyer(buyer.address, 'smart')}*/}
+            {/*        />*/}
+            {/*    </div>*/}
 
-                <div className={`${styles.card__viewing}`}>
-                    <label htmlFor={`spec-${buyer.address}`} className={styles.label__spec}>Спекулянт</label>
-                    <input
-                        className={styles.inp__spec}
-                        type="checkbox"
-                        name={`type-${buyer.address}`} // одинаковое name для группы
-                        id={`spec-${buyer.address}`}
-                        value='spec'
-                        checked={buyerType === 'spec'}
-                        onChange={() => handleTypeBuyer(buyer.address, 'spec')}
-                    />
-                </div>
-            </div>
+            {/*    <div className={`${styles.card__viewing}`}>*/}
+            {/*        <label htmlFor={`spec-${buyer.address}`} className={styles.label__spec}>Спекулянт</label>*/}
+            {/*        <input*/}
+            {/*            className={styles.inp__spec}*/}
+            {/*            type="checkbox"*/}
+            {/*            name={`type-${buyer.address}`} // одинаковое name для группы*/}
+            {/*            id={`spec-${buyer.address}`}*/}
+            {/*            value='spec'*/}
+            {/*            checked={buyerType === 'spec'}*/}
+            {/*            onChange={() => handleTypeBuyer(buyer.address, 'spec')}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
             <div
                 className={`${styles.card__info} ${styles.card__wallet}`}

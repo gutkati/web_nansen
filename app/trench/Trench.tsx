@@ -20,7 +20,7 @@ import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurcha
 import Loader from "@/app/components/loader/loader";
 import {useTrenchDates} from "@/app/hooks/useTrenchDates";
 import {usePurchaseTrenchData} from "@/app/hooks/usePurchaseTrenchData";
-import {groupDatesByMonth} from "@/app/utils/utils"
+import {formatDate, groupDatesByMonth} from "@/app/utils/utils"
 import CardBuyerTrench from "@/app/components/cardBuyerTrench/CardBuyerTrench";
 import {normalizeDate} from "@/app/utils/utils"
 import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
@@ -35,6 +35,7 @@ type TokenTrench = {
 
 type TrenchProps = {
     tokens: TokenTrenchType[];
+    dateLastPurchase: DateLastPurchase[];
 }
 
 type DateItem = {
@@ -42,7 +43,13 @@ type DateItem = {
     display: string; // "17 сентября"
 }
 
-const Trench: React.FC<TrenchProps> = ({tokens}) => {
+type DateLastPurchase = {
+    token_id: number;
+    id: number;
+    timestamp: string;
+};
+
+const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
     const [activeTokenId, setActiveTokenId] = useState<number | null>(null)
     const [isModalOpenAddToken, setIsModalOpenAddToken] = useState<boolean>(false)
     const [nameAddToken, setNameAddToken] = useState<string>('')
@@ -66,6 +73,7 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
     const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
 
     const [isShowPurchasesTrench, setIsShowPurchasesTrench] = useState<boolean>(false)
+    const [localDateLastPurchase, setLocalDateLastPurchase] = useState<DateLastPurchase[]>(dateLastPurchase)
 
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -344,6 +352,15 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
                         .sort((a, b) => a.name.localeCompare(b.name)) // сортировка по имени
                         .map(token => {
                             const isNew = token.added_at ? (new Date().getTime() - new Date(token.added_at).getTime()) < ONE_WEEK_MS : false
+
+                            const lastPurchase = dateLastPurchase
+                                .filter(p => p.token_id === token.id)   // берем только по токену
+                                .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0] // самая свежая
+
+                            const lastPurchaseDate = lastPurchase
+                                ? formatDate(lastPurchase.timestamp)
+                                : '' // если покупок нет
+
                             return (
                                 <li key={token.id}
                                     onClick={() => showListMonthTrench(token.id)}
@@ -355,7 +372,7 @@ const Trench: React.FC<TrenchProps> = ({tokens}) => {
                                         <span>{token.name} {isNew &&
                                             <span className={styles.newLabel}>(new)</span>}
                                         </span>
-                                        {/*<span className={styles.token__trade_volume}>{token.trade_volume}</span>*/}
+                                        <span className={`${styles.token__last_date} ${styles.token__trade_volume}`}>{lastPurchaseDate}</span>
                                     </div>
 
                                     <div className={styles.token__action}>
