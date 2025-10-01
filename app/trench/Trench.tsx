@@ -8,10 +8,7 @@ import ButtonBack from "@/app/components/buttonBack/ButtonBack";
 import ButtonBlackList from "@/app/components/buttonBlackList/ButtonBlackList";
 import colors from '../styles/_variables.module.scss';
 import {TokenTrenchType, MonthType} from "@/app/types";
-import Notification from "@/app/components/notification/Notification";
 import ModalForm from "@/app/components/modalWindows/modalForm";
-import ModalAdd from "@/app/components/modalWindows/ModalAdd";
-import Token from "@/app/token/Token";
 import Tooltip from "@/app/components/tooltip/Tooltip";
 import ButtonAdd from "@/app/components/buttonAdd/ButtonAdd";
 import ModalAddTrenchToken from "@/app/components/modalWindows/ModalAddTrenchToken";
@@ -23,7 +20,6 @@ import {usePurchaseTrenchData} from "@/app/hooks/usePurchaseTrenchData";
 import {formatDate, groupDatesByMonth} from "@/app/utils/utils"
 import CardBuyerTrench from "@/app/components/cardBuyerTrench/CardBuyerTrench";
 import {normalizeDate} from "@/app/utils/utils"
-import ModalBlackList from "@/app/components/modalWindows/ModalBlackList";
 import ModalBlackListTrench from "@/app/components/modalWindows/ModalBlackListTrench";
 
 type TokenTrench = {
@@ -73,7 +69,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
     const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
 
     const [isShowPurchasesTrench, setIsShowPurchasesTrench] = useState<boolean>(false)
-    const [localDateLastPurchase, setLocalDateLastPurchase] = useState<DateLastPurchase[]>(dateLastPurchase)
 
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -169,37 +164,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
             setTimeout(() => setSuccessMessageDeleteToken(false), 4000)
         } catch (err) {
             console.error('Сетевая ошибка при удалении:', err);
-        }
-    };
-
-    const handleBuyerTypeChange = async (address: string, value: 'smart' | 'spec') => {
-        const currentType = buyerTypesTrench[address] || null;
-        const newType = currentType === value ? null : value;
-
-        setBuyerTypesTrench(prev => ({
-            ...prev,
-            [address]: newType
-        }));
-
-        try {
-            const res = await fetch("/api/updateBuyerTypeTrench", {
-                method: "PATCH",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    buyer_type: newType,
-                    address
-                })
-            });
-
-            const result = await res.json();
-            if (!res.ok) {
-                console.error("Ошибка при обновлении:", result.error);
-                // откат
-                setBuyerTypesTrench(prev => ({...prev, [address]: currentType}));
-            }
-        } catch (err) {
-            console.error("Сетевая ошибка:", err);
-            setBuyerTypesTrench(prev => ({...prev, [address]: currentType}));
         }
     };
 
@@ -315,8 +279,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
         setIsModalOpenRemoveToken(true)
         setActiveTokenId(tokenId)
         setNameAddToken(tokenName)
-        // setIsShowMonth(false)
-        // setIsPurchases(false)
     }
 
     function openModalTokenTrenchAdd() {
@@ -366,7 +328,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
                                     onClick={() => showListMonthTrench(token.id)}
                                     className={`${styles.token__name} ${activeTokenId === token.id ? styles.text__active : ''}`}
                                 >
-                                    {/*{isClient && notificationStatus && <Notification color={notificationStatus}/>}*/}
 
                                     <div className={styles.token__info}>
                                         <span>{token.name} {isNew &&
@@ -408,7 +369,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
                                              onClick={() => {
                                                  if (activeTokenId !== null) {
                                                      showListDate(month.name, month.date)
-                                                     //showListPurchases(date.name, date.date, activeTokenId);
                                                  }
                                              }}
                                         >
@@ -472,8 +432,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
                                         key={buyerTrench.id}
                                         buyer={buyerTrench}
                                         onDelete={getUpdatedListBuyerTrench}
-                                        buyerType={buyerTypesTrench[buyerTrench.address] || null}
-                                        handleTypeBuyer={handleBuyerTypeChange}
                                         hideBuyerBlackList={hideBuyerTrenchBlackList}
                                     />
                                 )}

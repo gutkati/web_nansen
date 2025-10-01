@@ -4,7 +4,6 @@ import styles from '@/app/components/cardBuyer/CardBuyer.module.scss'
 import ModalForm from "@/app/components/modalWindows/modalForm";
 import ModalRemovePurchase from "@/app/components/modalWindows/modalRemovePurchase";
 import ModalDeletePurchaseList from "@/app/components/modalWindows/ModalDeletePurchaseList";
-import {formatDate} from "@/app/utils/utils";
 
 type BuyerTrenchProps = {
     buyer: {
@@ -21,57 +20,16 @@ type BuyerTrenchProps = {
         buyer_type: string | null;
     };
     onDelete: () => void;
-    buyerType: 'smart' | 'spec' | null;
-    handleTypeBuyer: (address: string, type: 'smart' | 'spec') => void;
     hideBuyerBlackList: (address: string, address_labels: string) => void;
 }
 
 const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                                                          buyer,
                                                          onDelete,
-                                                         buyerType,
-                                                         handleTypeBuyer,
                                                          hideBuyerBlackList
                                                      }) => {
-    const [showKey, setShowKey] = useState<boolean>(Boolean(buyer.show_key))
     const [isModalOpenDelBuyer, setIsModalOpenDelBuyer] = useState<boolean>(false)
     const [isModalOpenDelBlackList, setIsModalOpenDelBlackList] = useState<boolean>(false)
-
-    const linkClass = buyerType === 'smart'
-        ? styles.link__smart
-        : buyerType === 'spec'
-            ? styles.link__spec
-            : '';
-
-    const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.checked;
-        setShowKey(newValue);
-
-        try {
-            const res = await fetch("/api/updateShowKeyTrench", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    show_key: newValue,
-                    id: buyer.id,
-                    address: buyer.address,
-                })
-            })
-
-            const result = await res.json()
-
-            if (!res.ok) {
-                console.error("Ошибка при обновлении:", result.error);
-                // Откатим чекбокс обратно
-                setShowKey(!newValue);
-            }
-        } catch (err) {
-            console.error("Сетевая ошибка:", err);
-            setShowKey(!newValue);
-        }
-    }
 
     const handleDeleteBuyer = async (id: number) => {
         try {
@@ -117,7 +75,7 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
 
             </div>
 
-            <div className={`${styles.card__link} ${linkClass}`}>
+            <div className={styles.card__link}>
                 <a href={`https://app.nansen.ai/profiler?address=${buyer.address}&chain=all`}
                    target='_blank'>{buyer.address}</a>
             </div>
@@ -145,56 +103,12 @@ const CardBuyerTrench: React.FC<BuyerTrenchProps> = ({
                 <span className={styles.card__text_bold}>{buyer.value_usd}</span>
             </div>
 
-            {/*<div className={`${styles.card__info} ${styles.card__date}`}>*/}
-            {/*    <span className={styles.inactive__text}>Дата</span>*/}
-            {/*    <span className={styles.card__text_bold}>{formatDate(buyer.timestamp)}</span>*/}
-            {/*</div>*/}
-
-            {/*<div className={styles.card__containercheck}>*/}
-            {/*    <div className={`${styles.card__viewing}`}>*/}
-            {/*        <label htmlFor={`viewing-${buyer.address}`}>Просмотр</label>*/}
-            {/*        <input*/}
-            {/*            type="checkbox"*/}
-            {/*            id={`viewing-${buyer.address}`}*/}
-            {/*            checked={showKey}*/}
-            {/*            onChange={handleCheckboxChange}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-
-            {/*    <div className={`${styles.card__viewing}`}>*/}
-            {/*        <label htmlFor={`smart-${buyer.address}`} className={styles.label__smart}>Смарт</label>*/}
-            {/*        <input*/}
-            {/*            className={styles.inp__smart}*/}
-            {/*            type="checkbox"*/}
-            {/*            name={`type-${buyer.address}`} // одинаковое name для группы*/}
-            {/*            id={`smart-${buyer.address}`}*/}
-            {/*            value='smart'*/}
-            {/*            checked={buyerType === 'smart'}*/}
-            {/*            onChange={() => handleTypeBuyer(buyer.address, 'smart')}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-
-            {/*    <div className={`${styles.card__viewing}`}>*/}
-            {/*        <label htmlFor={`spec-${buyer.address}`} className={styles.label__spec}>Спекулянт</label>*/}
-            {/*        <input*/}
-            {/*            className={styles.inp__spec}*/}
-            {/*            type="checkbox"*/}
-            {/*            name={`type-${buyer.address}`} // одинаковое name для группы*/}
-            {/*            id={`spec-${buyer.address}`}*/}
-            {/*            value='spec'*/}
-            {/*            checked={buyerType === 'spec'}*/}
-            {/*            onChange={() => handleTypeBuyer(buyer.address, 'spec')}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
             <div
                 className={`${styles.card__info} ${styles.card__wallet}`}
                 onClick={openModalBlackList}
             >
                 <span>Убрать кошельки из списка</span>
             </div>
-
 
             {
                 isModalOpenDelBuyer && (

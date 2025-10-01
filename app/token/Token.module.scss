@@ -12,10 +12,6 @@
     align-items: center;
     width: 93%;
 
-    //@media (max-width: 1440px) {
-    //  width: 94%;
-    //}
-
     & .container__button {
       display: flex;
       gap: 20px;
@@ -64,7 +60,6 @@
       position: relative;
 
       @media (max-width: 1440px) {
-        //width: 97%;
         line-height: 26px;
         font-size: 18px;
       }
