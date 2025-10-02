@@ -65,7 +65,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
     const [activeDate, setActiveDate] = useState<string | null>(null)
     const [isShowDate, setIsShowDate] = useState<boolean>(false)
     const [messageDate, setMessageDate] = useState<string>('')
-    const [buyerTypesTrench, setBuyerTypesTrench] = useState<Record<string, 'smart' | 'spec' | null>>({});
     const [isOpenModalBlackList, setIsOpenModalBlackList] = useState<boolean>(false)
 
     const [isShowPurchasesTrench, setIsShowPurchasesTrench] = useState<boolean>(false)
@@ -93,19 +92,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
             setMessageDate('Покупок не было!')
         }
     }, [dates])
-
-    useEffect(() => {
-        const initialTypes: Record<string, 'smart' | 'spec' | null> = {};
-        purchasesTokenTrench.forEach(buyer => {
-            if (buyer.buyer_type === 'smart' || buyer.buyer_type === 'spec') {
-                initialTypes[buyer.address] = buyer.buyer_type;
-            } else {
-                initialTypes[buyer.address] = null;
-            }
-        });
-
-        setBuyerTypesTrench(initialTypes);
-    }, [purchasesTokenTrench]);
 
     const handleAddTokenTrench = async (newToken: TokenTrench) => {
         try {

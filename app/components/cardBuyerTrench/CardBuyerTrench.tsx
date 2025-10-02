@@ -16,8 +16,6 @@ type BuyerTrenchProps = {
         label_type: string;
         value_usd: string;
         timestamp: string;
-        show_key: number | null;
-        buyer_type: string | null;
     };
     onDelete: () => void;
     hideBuyerBlackList: (address: string, address_labels: string) => void;

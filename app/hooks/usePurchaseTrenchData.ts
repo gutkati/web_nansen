@@ -12,8 +12,6 @@ interface PurchaseData {
     label_type: string;
     value_usd: string;
     timestamp: string;
-    show_key: number | null;
-    buyer_type: string | null;
 }
 
 export function usePurchaseTrenchData() {
