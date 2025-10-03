@@ -208,5 +208,3 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
 };
 
 export default CardBuyer;
-
-//hideBuyerBlackList(buyer.address)
