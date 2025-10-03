@@ -176,7 +176,6 @@ const CardBuyer: React.FC<BuyerProps> = ({buyer, onDelete, buyerType, handleType
                 <span>Убрать кошельки из списка</span>
             </div>
 
-
             {
                 isModalOpenDelBuyer && (
                     <ModalForm children={<ModalRemovePurchase
