@@ -16,6 +16,7 @@ export function groupDatesByMonth(dates: string[]) {
     const monthMap = new Map<string, Date[]>();
 
     dates.forEach(dateStr => {
+        if (!dateStr) return
         const date = new Date(dateStr);
         const monthName = date.toLocaleString('default', {month: 'long', year: 'numeric'}); // например: "июль 2025"
 

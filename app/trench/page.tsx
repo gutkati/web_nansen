@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import {getTokensTrench} from "@/lib/queriesTrench/tokenTrenchQueries";
-import {getDateLastPurchase} from "@/lib/queriesTrench/dateListPurchasesQueries";
+import {getDateLastPurchase} from "@/lib/queriesTrench/dateLastPurchasesQueries";
 import Trench from "@/app/trench/Trench";
 
 // делает страницу динамической

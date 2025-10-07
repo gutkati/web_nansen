@@ -84,6 +84,7 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
 
     useEffect(() => {
         if (dates.length > 0) {
+            console.log('dates2', dates)
             getGroupDatesByMonth(dates)
             setMessageDate('')
             setActiveMonth(null)
@@ -175,7 +176,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
         }
     }
 
-
     async function getUpdatedListBuyerTrench() {
         if (activeTokenId !== null) {
 
@@ -185,6 +185,7 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
             getGroupDatesByMonth(updatedDates);
 
             fetchData(activeTokenId, selectedMonth)
+            console.log('✅ чистые даты покупок:', updatedPurchases.map(p => normalizeDate(p.timestamp)));
             router.refresh(); // перезагрузить страницу после удаления покупки
         }
     }
@@ -244,9 +245,7 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
             groupDatesList(date)
             setActiveMonth(monthName)
             setIsShowPurchasesTrench(false)
-            //fetchDates(tokenId)
         }
-
     }
 
     function showListPurchasesTrench(monthDates: Date[], rawDate: string, tokenId: number) {
@@ -265,6 +264,8 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
         setIsModalOpenRemoveToken(true)
         setActiveTokenId(tokenId)
         setNameAddToken(tokenName)
+        setIsShowMonth(false)
+        setIsShowDate(false)
     }
 
     function openModalTokenTrenchAdd() {
@@ -319,7 +320,8 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
                                         <span>{token.name} {isNew &&
                                             <span className={styles.newLabel}>(new)</span>}
                                         </span>
-                                        <span className={`${styles.token__last_date} ${styles.token__trade_volume}`}>{lastPurchaseDate}</span>
+                                        <span
+                                            className={`${styles.token__last_date} ${styles.token__trade_volume}`}>{lastPurchaseDate}</span>
                                     </div>
 
                                     <div className={styles.token__action}>

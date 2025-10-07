@@ -63,10 +63,3 @@ async function ensureTables() {
 ensureTables().catch(console.error);
 
 export default connection;
-
-// let connection = await mysql.createConnection({
-//     host: '192.168.10.38', // имя хоста
-//     database: 'nansen',      // имя базы данных
-//     user: 'starscream',      // имя пользователя
-//     password: 'Dao5seiw',          // пароль
-// });
