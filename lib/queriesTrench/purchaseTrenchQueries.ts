@@ -13,10 +13,6 @@ interface PurchaseTrench {
 }
 
 export async function getPurchaseTrenchByTokenId(tokenId: number): Promise<PurchaseTrench[]> {
-    // const [rows] = await connection.query(
-    //     `SELECT id, token_id, address, address_labels, token_amount, total_outflow, total_inflow, value_usd, show_key, buyer_type, timestamp FROM tgm_holders WHERE token_id = ?`,
-    //     [tokenId]
-    // )
 
     const [rows] = await connection.query(
         `SELECT b.id, b.token_id, b.address, b.address_labels, b.token_amount,

@@ -84,7 +84,6 @@ const Trench: React.FC<TrenchProps> = ({tokens, dateLastPurchase}) => {
 
     useEffect(() => {
         if (dates.length > 0) {
-            console.log('dates2', dates)
             getGroupDatesByMonth(dates)
             setMessageDate('')
             setActiveMonth(null)
