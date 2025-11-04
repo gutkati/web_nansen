@@ -1,0 +1,33 @@
+@import "../../styles/_variables.module";
+
+.input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background-color: #4a536a;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+
+  &:hover {
+    opacity: .9;
+  }
+
+  //&:checked {
+  //  background-color: $lightgreen-hover-color;
+  //  border-color: $lightgreen-hover-color;
+  //}
+
+  &:checked::after {
+    content: "✓";
+    color: $lightgreen-hover-color;
+    font-weight: bold;
+    position: absolute;
+    left: 4px;
+    top: -1px;
+    font-size: 13px;
+    text-align: center;
+  }
+}
