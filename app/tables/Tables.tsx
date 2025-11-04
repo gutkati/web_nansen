@@ -124,22 +124,22 @@ const Tables = () => {
 
             <section className={styles.nameTables}>
                 <ul className={styles.nameTables__list}>
-                    <li className={styles.nameTables__item}>
-                        <p>Bought_sold</p>
-                        <ButtonClose onClose={closeModalTables}/>
-                    </li>
-                    <li className={styles.nameTables__item}>
-                        <p>Bought_sold</p>
-                        <ButtonClose onClose={closeModalTables}/>
-                    </li>
-                    <li className={styles.nameTables__item}>
-                        <p>Bought_sold</p>
-                        <ButtonClose onClose={closeModalTables}/>
-                    </li>
-                    <li className={styles.nameTables__item}>
-                        <p>Bought_sold</p>
-                        <ButtonClose onClose={closeModalTables}/>
-                    </li>
+                    {/*<li className={styles.nameTables__item}>*/}
+                    {/*    <p>Bought_sold</p>*/}
+                    {/*    <ButtonClose onClose={closeModalTables}/>*/}
+                    {/*</li>*/}
+                    {/*<li className={styles.nameTables__item}>*/}
+                    {/*    <p>Bought_sold</p>*/}
+                    {/*    <ButtonClose onClose={closeModalTables}/>*/}
+                    {/*</li>*/}
+                    {/*<li className={styles.nameTables__item}>*/}
+                    {/*    <p>Bought_sold</p>*/}
+                    {/*    <ButtonClose onClose={closeModalTables}/>*/}
+                    {/*</li>*/}
+                    {/*<li className={styles.nameTables__item}>*/}
+                    {/*    <p>Bought_sold</p>*/}
+                    {/*    <ButtonClose onClose={closeModalTables}/>*/}
+                    {/*</li>*/}
                 </ul>
             </section>
 
