@@ -1,0 +1,110 @@
+@import "../../styles/_variables.module";
+
+.tableDB {
+  border-collapse: collapse;
+
+  & .thead {
+    border-radius: 5px;
+    background-color: $tables-color;
+    position: sticky;
+    top: 0; // Прилипает к верху контейнера
+    z-index: 10; // Чтобы шапка была над содержимым
+
+    &__tr {
+      display: table-row;
+
+      & .tr__th {
+        padding: 5px 8px;
+        font-size: 11px;
+        text-transform: uppercase;
+        line-height: 20px;
+        border-right: 1px solid rgba(250, 250, 250, .4);
+        position: sticky;
+        top: 0; // Прилипает к верху
+        background-color: $tables-color; // Важно: фон должен быть непрозрачным
+        z-index: 11;
+        text-align: left;
+        white-space: nowrap; // Запрещает перенос всей ячейки
+
+        &:first-child {
+          border-radius: 5px 0 0 5px;
+        }
+
+        &:last-child {
+          border-radius: 0 5px 5px 0;
+          border-right: none;
+        }
+
+        & .thContainer {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          & .name {
+            display: inline-block;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            align-self: flex-start;
+          }
+
+          & .btn {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            min-width: 13px; // Фиксированная ширина
+            background-image: url("../../images/icons/close-arrow.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+            vertical-align: middle;
+            float: right;
+            align-self: flex-end;
+
+            &:hover {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .tbody {
+
+    &__tr {
+
+      &:nth-child(even) {
+        background-color: $grey-color;
+      }
+
+      & .tr__td {
+        padding: 5px 8px;
+        text-align: left;
+        font-size: 11px;
+        line-height: 20px;
+        border-right: 1px solid rgba(250, 250, 250, .3);
+        white-space: nowrap; /* Запрещает перенос текста */
+        overflow: hidden; /* Скрывает текст, выходящий за границы */
+        text-overflow: ellipsis; /* Добавляет многоточие если текст не помещается */
+
+        &:first-child {
+          border-radius: 5px 0 0 5px;
+        }
+
+        &:last-child {
+          border-radius: 0 5px 5px 0;
+          border-right: none;
+        }
+      }
+    }
+
+    &__tr_light {
+      background-color: $grey-color;
+    }
+  }
+}

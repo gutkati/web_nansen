@@ -4,6 +4,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   & .header {
     width: 100%;
@@ -71,37 +72,111 @@
             background-size: 20px;
             transition: all .2s ease;
           }
-
         }
       }
+
+    }
+
+    & .position__listTables_right {
+      left: 300px;
     }
   }
 
   & .nameTables {
-    width: 100%;
-    min-height: 50px;
+    min-width: 100px;
     background-color: $darkgrey-color;
     border: 1px solid $grey-color;
     border-radius: 10px;
     position: relative;
-    padding: 7px 10px;
+    padding: 10px 10px 5px 10px;
     box-shadow: $box-shadow;
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
 
-    & .nameTables__list {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 5px;
+    &.nameTablesScroll {
+      overflow: hidden; // Скрываем всё что выходит за границы
+    }
 
-      & .nameTables__item {
-        min-width: 200px;
-        list-style: none;
-        background-color: $darkgrey-color;
-        border: 1px solid $border-color;
+    & .container__scrollX {
+      overflow-x: auto;
+      padding-bottom: 5px;
+
+      &::-webkit-scrollbar {
+        height: 10px;
+        transition: all ease .2s;
+      }
+
+      // Дорожка скролла (фон)
+      &::-webkit-scrollbar-track {
+        background: inherit;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #232a32;
         border-radius: 10px;
-        padding: 7px 15px;
-        position: relative;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #1e232b;
+      }
+
+      & .nameTables__list {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 5px;
+
+        & .nameTables__item {
+          min-width: 200px;
+          list-style: none;
+          background-color: $darkgrey-color;
+          border: 1px solid $border-color;
+          border-radius: 10px;
+          padding: 7px 15px;
+          position: relative;
+          transition: all .2s ease;
+
+          &:hover {
+            cursor: pointer;
+            box-shadow: $box-shadow;
+          }
+
+          &:active {
+            box-shadow: none;
+          }
+
+          &.color__mark {
+            color: $lightgreen-color;
+          }
+        }
+      }
+    }
+
+    & .container__scrollY {
+      height: 100vh;
+      overflow-y: auto;
+      padding-right: 5px;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        transition: all ease .2s;
+      }
+
+      // Дорожка скролла (фон)
+      &::-webkit-scrollbar-track {
+        background: inherit;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #232a32;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #1e232b;
       }
     }
   }
