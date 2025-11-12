@@ -9,6 +9,8 @@ import CheckBox from "@/app/components/checkBox/CheckBox";
 import Loader from "@/app/components/loader/loader";
 import TableDB from "@/app/components/tableDB/TableDB";
 
+
+
 type ListNameTables = {
     id: number;
     name: string;
